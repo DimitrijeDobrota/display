@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.0
+    VERSION 0.1.1
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
@@ -13,12 +13,15 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
+find_package(alec 0.1 CONFIG REQUIRED)
+
 # ---- Declare library ----
 
 add_library(
     display_display
     source/display.cpp
 )
+target_link_libraries(display_display PUBLIC alec::alec)
 add_library(display::display ALIAS display_display)
 
 include(GenerateExportHeader)
@@ -61,6 +64,15 @@ target_compile_features(display_display PUBLIC cxx_std_20)
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
   include(cmake/install-rules.cmake)
+endif()
+
+# ---- Examples ----
+
+if(PROJECT_IS_TOP_LEVEL)
+  option(BUILD_EXAMPLES "Build examples tree." "${display_DEVELOPER_MODE}")
+  if(BUILD_EXAMPLES)
+    add_subdirectory(example)
+  endif()
 endif()
 
 # ---- Developer mode ----

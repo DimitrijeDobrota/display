@@ -5,7 +5,12 @@
 namespace display
 {
 
-void start();
-void stop();
+class DISPLAY_EXPORT widget
+{
+public:
+
+private:
+};
 
 }  // namespace display
+

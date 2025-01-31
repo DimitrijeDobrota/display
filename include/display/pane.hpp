@@ -5,7 +5,11 @@
 namespace display
 {
 
-void start();
-void stop();
+class DISPLAY_EXPORT pane
+{
+public:
+
+private:
+};
 
 }  // namespace display

@@ -1,13 +1,20 @@
-#include <string>
+#include <iostream>
 
 #include "display/display.hpp"
 
-exported_class::exported_class()
-    : m_name {"display"}
+#include <alec/alec.hpp>
+
+namespace display
 {
+
+void start()
+{
+  std::cout << alec::abuf_enable_v << alec::cursor_hide_v;
 }
 
-auto exported_class::name() const -> char const*
+void stop()
 {
-  return m_name.c_str();
+  std::cout << alec::abuf_disable_v;
 }
+
+}  // namespace display
