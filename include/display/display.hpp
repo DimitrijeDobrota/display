@@ -1,11 +1,12 @@
 #pragma once
 
-#include "display/display_export.hpp"
-
 namespace display
 {
 
-void start();
-void stop();
+using exit_f = void();
+
+void exit();
+void start(exit_f f_exit = exit);
+void stop(bool force = false);
 
 }  // namespace display

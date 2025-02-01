@@ -6,7 +6,8 @@ int main()
 {
   display::start();
 
-  (void)std::getchar();
+  while (true) {
+  }
 
   display::stop();
 
