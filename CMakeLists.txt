@@ -13,7 +13,7 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-find_package(alec 0.1 CONFIG REQUIRED)
+find_package(alec 0.1.13 CONFIG REQUIRED)
 
 # ---- Declare library ----
 
