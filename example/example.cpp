@@ -13,10 +13,6 @@ int main()
     if (event.type() == alec::event::Type::KEY && event.key() == 'q') {
       break;
     }
-
-    const auto size = alec::get_screen_size();
-    std::cout << std::format("({}, {})\n", std::get<0>(size), std::get<1>(size))
-              << std::flush;
   }
 
   display::stop();
