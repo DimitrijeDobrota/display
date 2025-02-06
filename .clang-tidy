@@ -5,6 +5,7 @@
 Checks: "*,\
   -google-readability-todo,\
   -altera-*,\
+  -cppcoreguidelines-avoid-magic-numbers,\
   -abseil-string-find-str-contains,\
   -fuchsia-*,\
   fuchsia-multiple-inheritance,\
@@ -14,7 +15,9 @@ Checks: "*,\
   -modernize-use-nodiscard,\
   -modernize-use-trailing-return-type,\
   -misc-include-cleaner,\
-  -misc-non-private-member-variables-in-classes"
+  -misc-non-private-member-variables-in-classes,\
+  -readability-magic-numbers
+"
 WarningsAsErrors: ''
 CheckOptions:
   - key: 'bugprone-argument-comment.StrictMode'
@@ -52,7 +55,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.AbstractClassCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ClassCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.ClassConstantCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ClassMemberCase'
