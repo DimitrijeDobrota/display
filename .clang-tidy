@@ -5,6 +5,7 @@
 Checks: "*,\
   -google-readability-todo,\
   -altera-*,\
+  -boost-*,\
   -cppcoreguidelines-avoid-magic-numbers,\
   -abseil-string-find-str-contains,\
   -fuchsia-*,\
@@ -14,6 +15,7 @@ Checks: "*,\
   -llvmlibc-*,\
   -modernize-use-nodiscard,\
   -modernize-use-trailing-return-type,\
+  -modernize-use-ranges,\
   -misc-include-cleaner,\
   -misc-non-private-member-variables-in-classes,\
   -readability-magic-numbers
