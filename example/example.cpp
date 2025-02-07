@@ -30,9 +30,10 @@ int main()
   display::start();
 
   display::LayoutFree layout;
-  layout.add_window({3, 3, 15, 15});
-  layout.add_window({0, 0, 10, 10}, 1);
-  layout.add_window({5, 5, 5, 10}, 1);
+  layout.add_window({{3, 3}, {15, 15}});
+  layout.add_window({{0, 0}, {10, 10}}, 1);
+  layout.add_window({{5, 5}, {5, 10}}, 1);
+  layout.add_window({{15, 15}, {5, 10}}, 1);
   layout.render(renderer);
 
   while (true) {
