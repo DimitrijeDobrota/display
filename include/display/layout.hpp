@@ -46,7 +46,10 @@ class LayoutFree
 public:
   using render_f = int(Window&);
 
-  void add_window(Window window, int zidx = -1);
+  auto operator[](std::size_t idx) const { return std::get<1>(m_windows[idx]); }
+  auto operator[](std::size_t idx) { return std::get<1>(m_windows[idx]); }
+
+  void append(Window window, int zidx = -1);
 
   int render(render_f renderer);
 
