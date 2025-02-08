@@ -35,12 +35,39 @@ struct pos_t
   sz_t z;
 };
 
+enum class PvtX : std::uint8_t
+{
+  Left,
+  Center,
+  Right
+};
+
+enum class PvtY : std::uint8_t
+{
+  Top,
+  Center,
+  Bottom
+};
+
+struct piv_t
+{
+  piv_t(PvtX pvtx = PvtX::Left, PvtY pvty = PvtY::Top)  // NOLINT
+      : x(pvtx)
+      , y(pvty)
+  {
+  }
+
+  PvtX x;
+  PvtY y;
+};
+
 class Window
 {
 public:
-  Window(pos_t pos, dim_t dim)
+  Window(pos_t pos, dim_t dim, piv_t piv = {})
       : m_pos(pos)
       , m_dim(dim)
+      , m_piv(piv)
   {
   }
 
@@ -50,9 +77,13 @@ public:
   const auto& dim() const { return m_dim; }
   auto& dim() { return m_dim; }
 
+  const auto& piv() const { return m_piv; }
+  auto& piv() { return m_piv; }
+
 private:
   pos_t m_pos;
   dim_t m_dim;
+  piv_t m_piv;
 };
 
 class LayoutFree
