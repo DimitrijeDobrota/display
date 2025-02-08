@@ -91,8 +91,8 @@ class LayoutFree
 public:
   using render_f = int(Window&);
 
-  auto operator[](std::size_t idx) const { return m_windows[idx]; }
-  auto operator[](std::size_t idx) { return m_windows[idx]; }
+  const auto& operator[](std::size_t idx) const { return m_windows[idx]; }
+  auto& operator[](std::size_t idx) { return m_windows[idx]; }
 
   void append(Window window);
 

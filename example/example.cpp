@@ -10,8 +10,7 @@ namespace
 
 int renderer(display::Window& win)
 {
-  using display::PvtX;
-  using display::PvtY;
+  using display::PvtX, display::PvtY;
 
   static int color_red = 0;
 
@@ -50,7 +49,8 @@ int renderer(display::Window& win)
       break;
   }
 
-  std::cout << alec::background(color_red += 25, 65, 65);
+  color_red = (color_red + 25) % 256;
+  std::cout << alec::background(color_red, 65, 65);
   for (auto ypos = start_y; ypos <= end_y; ypos++) {
     std::cout << alec::cursor_position(ypos, start_x);
     std::cout << std::string(win.dim().width, ' ');
@@ -66,30 +66,50 @@ int renderer(display::Window& win)
 int main()
 {
   try {
-    display::start();
-
-    const auto [cols, rows] = alec::get_screen_size();
-    const std::uint16_t colsm = cols / 2;
-    const std::uint16_t rowm = rows / 2;
-
-    using display::PvtX;
-    using display::PvtY;
-
     display::LayoutFree layout;
-    layout.append({{0, 0}, {20, 10}, {PvtX::Left, PvtY::Top}});
-    layout.append({{colsm, 0}, {20, 10}, {PvtX::Center, PvtY::Top}});
-    layout.append({{cols, 0}, {20, 10}, {PvtX::Right, PvtY::Top}});
-    layout.append({{cols, rowm}, {20, 10}, {PvtX::Right, PvtY::Center}});
-    layout.append({{cols, rows}, {20, 10}, {PvtX::Right, PvtY::Bottom}});
-    layout.append({{colsm, rows}, {20, 10}, {PvtX::Center, PvtY::Bottom}});
-    layout.append({{0, rows}, {20, 10}, {PvtX::Left, PvtY::Bottom}});
-    layout.append({{0, rowm}, {20, 10}, {PvtX::Left, PvtY::Center}});
-    layout.append({{colsm, rowm}, {20, 10}, {PvtX::Center, PvtY::Center}});
-    layout.render(renderer);
 
+    auto redraw = [&]()
+    {
+      const auto [cols, rows] = alec::get_screen_size();
+      const std::uint16_t colsm = cols / 2;
+      const std::uint16_t rowm = rows / 2;
+
+      layout[0].pos() = {0, 0};
+      layout[1].pos() = {colsm, 0};
+      layout[2].pos() = {cols, 0};
+      layout[3].pos() = {cols, rowm};
+      layout[4].pos() = {cols, rows};
+      layout[5].pos() = {colsm, rows};
+      layout[6].pos() = {0, rows};
+      layout[7].pos() = {0, rowm};
+      layout[8].pos() = {colsm, rowm};
+
+      layout.render(renderer);
+    };
+
+    using display::PvtX, display::PvtY;
+
+    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Top}});
+    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Top}});
+    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Top}});
+    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Center}});
+    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Bottom}});
+    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Bottom}});
+    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Bottom}});
+    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Center}});
+    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Center}});
+
+    display::start();
+    redraw();
     while (true) {
-      const auto event = alec::get_event();
-      if (event.type() == alec::event::Type::KEY && event.key() == 'q') {
+      const auto event = display::get_event();
+      if (event.type() == display::event::Type::RESIZE) {
+        std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
+        redraw();
+        continue;
+      }
+
+      if (event.type() == display::event::Type::KEY && event.key() == 'q') {
         break;
       }
     }

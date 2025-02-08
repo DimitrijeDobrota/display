@@ -3,7 +3,6 @@
 
 #include "display/display.hpp"
 
-#include <alec/alec.hpp>
 #include <signal.h>
 #include <termios.h>
 #include <unistd.h>
@@ -23,11 +22,21 @@ namespace display
 {
 
 static int start_count = 0;  // NOLINT
+static bool resized = false;  // NOLINT
 
 void handle_sigwinch(int)
 {
-  const auto [col, row] = alec::get_screen_size();
-  std::cout << col << " " << row << std::endl;
+  resized = true;
+}
+
+event get_event()
+{
+  if (resized) {
+    resized = false;
+    return {event::Type::RESIZE, 0, 0};
+  }
+
+  return alec::get_event();
 }
 
 void exit()
