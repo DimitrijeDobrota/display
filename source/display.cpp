@@ -72,6 +72,7 @@ void stop(bool force)
 
   alec::dest_buffer();
   write<alec::cursor_show_v>();
+  write<alec::abuf_disable_v>();
 }
 
 }  // namespace display
