@@ -4,75 +4,23 @@
 #include "alec/alec.hpp"
 #include "display/display.hpp"
 #include "display/layout.hpp"
-#include "display/utility.hpp"
 
 namespace
 {
 
 int renderer(display::Window& win)
 {
-  using display::add_lim, display::sub_lim;
-  using display::PvtX, display::PvtY;
-  using display::sz_t;
+  using display::place_t;
 
   static int color_red = 0;
-
-  sz_t start_x = 0;
-  sz_t end_x = 0;
-  sz_t start_y = 0;
-  sz_t end_y = 0;
-
-  const auto [cols, rows] = alec::get_screen_size();
-  const auto [posx, posy, _] = win.pos();
-  const auto [wdth, hght] = win.dim();
-  const display::sz_t zero = 0;
-  const sz_t wdthm = wdth / 2;
-  const sz_t hghtm = hght / 2;
-
-  // Skip when pivot is outside the boundary
-  if (posx < 0 || posx > cols) {
-    return 0;
-  }
-
-  if (posy < 0 || posy > rows) {
-    return 0;
-  }
-
-  switch (win.piv().x) {
-    case PvtX::Left:
-      start_x = posx;
-      end_x = add_lim(start_x, wdth, cols);
-      break;
-    case PvtX::Center:
-      start_x = sub_lim(posx, wdthm, zero);
-      end_x = add_lim(posx, wdthm, cols);
-      break;
-    case PvtX::Right:
-      end_x = posx;
-      start_x = sub_lim(end_x, wdth, zero);
-      break;
-  }
-
-  switch (win.piv().y) {
-    case PvtY::Top:
-      start_y = posy;
-      end_y = add_lim(start_y, hght, rows);
-      break;
-    case PvtY::Center:
-      start_y = sub_lim(posy, hghtm, zero);
-      end_y = add_lim(posy, hghtm, rows);
-      break;
-    case PvtY::Bottom:
-      end_y = posy;
-      start_y = sub_lim(end_y, hght, zero);
-      break;
-  }
-
   color_red = (color_red + 25) % 256;
+
+  const auto [start, end] = win.place().value_or(place_t());
+
   std::cout << alec::background(color_red, 65, 65);
-  for (auto ypos = start_y; ypos <= end_y; ypos++) {
-    std::cout << alec::cursor_position(ypos, start_x);
-    std::cout << std::string(end_x - start_x + 1, ' ');
+  for (auto ypos = start.y; ypos <= end.y; ypos++) {
+    std::cout << alec::cursor_position(ypos, start.x);
+    std::cout << std::string(end.x - start.x + 1U, ' ');
   }
   std::cout << alec::background_v<alec::Color::DEFAULT>;
   std::cout << std::flush;

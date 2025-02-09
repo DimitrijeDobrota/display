@@ -1,9 +1,8 @@
-#include <iostream>
+#include <csignal>
 #include <stdexcept>
 
 #include "display/display.hpp"
 
-#include <signal.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -24,7 +23,7 @@ namespace display
 static int start_count = 0;  // NOLINT
 static bool resized = false;  // NOLINT
 
-void handle_sigwinch(int)
+void handle_sigwinch(int /* unused */)  // NOLINT misc-use-internal-linkage
 {
   resized = true;
 }
