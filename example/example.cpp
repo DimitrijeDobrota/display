@@ -33,8 +33,10 @@ int renderer(display::Window& win)
 int main()
 {
   try {
-    display::LayoutFree layout;
+    using display::Display;
 
+    auto& disp = Display::display();
+    display::LayoutFree layout;
     auto redraw = [&]()
     {
       const auto [cols, rows] = alec::get_screen_size();
@@ -66,17 +68,19 @@ int main()
     layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Center}});
     layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Center}});
 
-    display::start();
     redraw();
+
+    using display::event;
+
     while (true) {
-      const auto event = display::get_event();
-      if (event.type() == display::event::Type::RESIZE) {
+      const auto event = disp.get_event();
+      if (event.type() == event::Type::RESIZE) {
         std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
         redraw();
         continue;
       }
 
-      if (event.type() == display::event::Type::KEY && event.key() == 'q') {
+      if (event.type() == event::Type::KEY && event.key() == 'q') {
         break;
       }
     }
@@ -84,8 +88,6 @@ int main()
   } catch (std::exception& err) {
     std::cout << err.what() << '\n' << std::flush;
   }
-
-  display::stop();
 
   return 0;
 }

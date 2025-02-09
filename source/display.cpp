@@ -1,5 +1,4 @@
 #include <csignal>
-#include <stdexcept>
 
 #include "display/display.hpp"
 
@@ -20,40 +19,16 @@ inline void write()
 namespace display
 {
 
-static int start_count = 0;  // NOLINT
-static bool resized = false;  // NOLINT
+bool Display::is_resize_track = false;
 
-void handle_sigwinch(int /* unused */)  // NOLINT misc-use-internal-linkage
+Display& Display::display()
 {
-  resized = true;
+  static Display instance;
+  return instance;
 }
 
-event get_event()
+Display::Display()
 {
-  if (resized) {
-    resized = false;
-    return {event::Type::RESIZE, 0, 0};
-  }
-
-  return alec::get_event();
-}
-
-void exit()
-{
-  stop(/* force= */ true);
-}
-
-void start(exit_f f_exit)
-{
-  if (start_count++ > 0) {
-    // already started
-    return;
-  }
-
-  if (atexit(f_exit) != 0) {
-    throw std::runtime_error("Can't register new exit function");
-  }
-
   struct sigaction old_sig_action = {};
   sigaction(SIGWINCH, nullptr, &old_sig_action);
   if (old_sig_action.sa_handler != SIG_IGN) {
@@ -64,6 +39,7 @@ void start(exit_f f_exit)
     new_sig_action.sa_flags = SA_RESTART;
 
     sigaction(SIGWINCH, &new_sig_action, nullptr);
+    is_resize_track = true;
   }
 
   alec::init_buffer(STDIN_FILENO);
@@ -71,16 +47,41 @@ void start(exit_f f_exit)
   write<alec::cursor_hide_v>();
 }
 
-void stop(bool force)
+Display::~Display()
 {
-  if (!force && --start_count > 0) {
-    // still need to keep open
-    return;
-  }
-
   alec::dest_buffer();
   write<alec::cursor_show_v>();
   write<alec::abuf_disable_v>();
+}
+
+void Display::handle_sigwinch(int /* unused */)
+{
+  Display::display().set_resized();
+}
+
+event Display::get_event()  // NOLINT
+{
+  if (is_resize_track && m_is_resized) {
+    Display::reset_resized();
+    return {event::Type::RESIZE, 0, 0};
+  }
+
+  return alec::get_event();
+}
+
+void Display::set_resized()
+{
+  m_is_resized = true;
+}
+
+void Display::reset_resized()
+{
+  m_is_resized = false;
+}
+
+bool Display::get_resized() const
+{
+  return m_is_resized;
 }
 
 }  // namespace display
