@@ -28,35 +28,35 @@ int renderer(display::Window& win)
   return 0;
 }
 
+void recalculator(display::LayoutFree& layout)
+{
+  const auto [width, height] = layout.dim();
+  const display::sz_t midw = width / 2;
+  const display::sz_t midh = height / 2;
+
+  layout[4].pos() = {0, 0};
+  layout[5].pos() = {midw, 0};
+  layout[6].pos() = {width, 0};
+  layout[7].pos() = {width, midh};
+  layout[0].pos() = {width, height};
+  layout[1].pos() = {midw, height};
+  layout[2].pos() = {0, height};
+  layout[3].pos() = {0, midh};
+  layout[8].pos() = {midw, midh};
+}
+
 }  // namespace
 
 int main()
 {
   try {
     using display::Display;
+    using display::PvtX, display::PvtY;
 
     auto& disp = Display::display();
-    display::LayoutFree layout;
-    auto redraw = [&]()
-    {
-      const auto [cols, rows] = alec::get_screen_size();
-      const display::sz_t colsm = cols / 2;
-      const display::sz_t rowm = rows / 2;
 
-      layout[4].pos() = {0, 0};
-      layout[5].pos() = {colsm, 0};
-      layout[6].pos() = {cols, 0};
-      layout[7].pos() = {cols, rowm};
-      layout[0].pos() = {cols, rows};
-      layout[1].pos() = {colsm, rows};
-      layout[2].pos() = {0, rows};
-      layout[3].pos() = {0, rowm};
-      layout[8].pos() = {colsm, rowm};
-
-      layout.render(renderer);
-    };
-
-    using display::PvtX, display::PvtY;
+    display::LayoutFree layout(recalculator);
+    disp.screen().set_layout(&layout);
 
     layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Top}});
     layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Top}});
@@ -68,19 +68,17 @@ int main()
     layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Center}});
     layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Center}});
 
-    redraw();
+    for (disp.set_resized(); true;) {
+      using display::event;
 
-    using display::event;
-
-    while (true) {
-      const auto event = disp.get_event();
-      if (event.type() == event::Type::RESIZE) {
+      const auto evnt = disp.get_event();
+      if (evnt.type() == event::Type::RESIZE) {
         std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
-        redraw();
+        layout.render(renderer);
         continue;
       }
 
-      if (event.type() == event::Type::KEY && event.key() == 'q') {
+      if (evnt.type() == event::Type::KEY && evnt.key() == 'q') {
         break;
       }
     }

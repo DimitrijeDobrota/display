@@ -2,6 +2,8 @@
 
 #include <alec/alec.hpp>
 
+#include "display/screen.hpp"
+
 namespace display
 {
 
@@ -17,6 +19,8 @@ public:
   Display& operator=(const Display&) = delete;
   Display& operator=(Display&&) = delete;
 
+  Screen& screen() { return m_screen; }
+
   event get_event();
 
   bool get_resized() const;
@@ -30,6 +34,7 @@ private:
   static void handle_sigwinch(int /* unused */);
   static bool is_resize_track;
 
+  Screen m_screen;
   bool m_is_resized = false;
 };
 

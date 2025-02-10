@@ -3,13 +3,27 @@
 
 #include "display/layout.hpp"
 
+#include "display/screen.hpp"
+#include "display/window.hpp"
+
 namespace display
 {
+
+dim_t LayoutFree::dim() const
+{
+  return m_screen != nullptr ? m_screen->dim() : dim_t();
+}
 
 void LayoutFree::append(Window window)
 {
   m_windows.push_back(window);
+  m_windows.back().set_layout(this);
   m_is_sorted = false;
+}
+
+void LayoutFree::recalc()
+{
+  m_recalc(*this);
 }
 
 int LayoutFree::render(render_f renderer)

@@ -1,6 +1,6 @@
 #include "display/window.hpp"
 
-#include "alec/alec.hpp"
+#include "display/layout.hpp"
 #include "display/utility.hpp"
 
 namespace display
@@ -8,7 +8,7 @@ namespace display
 
 std::optional<place_t> Window::place() const
 {
-  const auto [cols, rows] = alec::get_screen_size();
+  const auto [cols, rows] = m_layout->dim();
   const auto [posx, posy, _] = pos();
 
   if (posx > cols || posy > rows) {

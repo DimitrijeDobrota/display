@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 
 namespace display
 {
@@ -12,6 +13,12 @@ struct dim_t
   dim_t(sz_t wdth = 0, sz_t hght = 0)  // NOLINT
       : width(wdth)
       , height(hght)
+  {
+  }
+
+  dim_t(std::pair<sz_t, sz_t> pair)  // NOLINT
+      : width(std::get<0>(pair))
+      , height(std::get<1>(pair))
   {
   }
 

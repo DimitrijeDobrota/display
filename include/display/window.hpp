@@ -7,6 +7,8 @@
 namespace display
 {
 
+class LayoutFree;
+
 class Window
 {
 public:
@@ -26,12 +28,17 @@ public:
   const auto& piv() const { return m_piv; }
   auto& piv() { return m_piv; }
 
+  LayoutFree* get_layout() { return m_layout; }
+  void set_layout(LayoutFree* layout) { m_layout = layout; }
+
   std::optional<place_t> place() const;
 
 private:
   pos_t m_pos;
   dim_t m_dim;
   piv_t m_piv;
+
+  LayoutFree* m_layout = nullptr;
 };
 
 }  // namespace display
