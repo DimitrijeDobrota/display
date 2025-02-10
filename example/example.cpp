@@ -7,15 +7,14 @@
 
 namespace
 {
-
-int renderer(display::Window& win)
+int renderer(const display::Window& win, display::place_t plc)
 {
   using display::place_t;
 
   static int color_red = 0;
   color_red = (color_red + 25) % 256;
 
-  const auto [start, end] = win.place().value_or(place_t());
+  const auto [start, end] = plc;
 
   std::cout << alec::background(color_red, 65, 65);
   for (auto ypos = start.y; ypos <= end.y; ypos++) {
@@ -24,6 +23,8 @@ int renderer(display::Window& win)
   }
   std::cout << alec::background_v<alec::Color::DEFAULT>;
   std::cout << std::flush;
+
+  (void)win;
 
   return 0;
 }
@@ -53,28 +54,27 @@ int main()
     using display::Display;
     using display::PvtX, display::PvtY;
 
-    auto& disp = Display::display();
+    auto& display = Display::display();
+    auto& screen = display.screen();
+    auto& layout = screen.set_layout({recalculator});
 
-    display::LayoutFree layout(recalculator);
-    disp.screen().set_layout(&layout);
+    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Top}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Top}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Top}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Center}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Bottom}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Bottom}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Bottom}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Center}});
+    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Center}});
 
-    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Top}});
-    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Top}});
-    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Top}});
-    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Center}});
-    layout.append({{}, {20, 10}, {PvtX::Right, PvtY::Bottom}});
-    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Bottom}});
-    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Bottom}});
-    layout.append({{}, {20, 10}, {PvtX::Left, PvtY::Center}});
-    layout.append({{}, {20, 10}, {PvtX::Center, PvtY::Center}});
-
-    for (disp.set_resized(); true;) {
+    for (display.set_resized(); true;) {
       using display::event;
 
-      const auto evnt = disp.get_event();
+      const auto evnt = display.get_event();
       if (evnt.type() == event::Type::RESIZE) {
         std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
-        layout.render(renderer);
+        screen.render();
         continue;
       }
 
@@ -82,7 +82,6 @@ int main()
         break;
       }
     }
-
   } catch (std::exception& err) {
     std::cout << err.what() << '\n' << std::flush;
   }

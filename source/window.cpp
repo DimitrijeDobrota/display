@@ -1,14 +1,18 @@
 #include "display/window.hpp"
 
-#include "display/layout.hpp"
 #include "display/utility.hpp"
 
 namespace display
 {
 
-std::optional<place_t> Window::place() const
+int Window::render(place_t place) const
 {
-  const auto [cols, rows] = m_layout->dim();
+  return m_renderer(*this, place);
+}
+
+std::optional<place_t> Window::place(dim_t bounds) const
+{
+  const auto [cols, rows] = bounds;
   const auto [posx, posy, _] = pos();
 
   if (posx > cols || posy > rows) {

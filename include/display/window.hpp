@@ -4,16 +4,16 @@
 
 #include "display/types.hpp"
 
-namespace display
-{
-
-class LayoutFree;
+namespace display {
 
 class Window
 {
 public:
-  Window(pos_t pos, dim_t dim, piv_t piv = {})
-      : m_pos(pos)
+  using render_f = int(const Window&, place_t place);
+
+  Window(render_f frender, pos_t pos, dim_t dim, piv_t piv = {})
+      : m_renderer(frender)
+      , m_pos(pos)
       , m_dim(dim)
       , m_piv(piv)
   {
@@ -28,17 +28,15 @@ public:
   const auto& piv() const { return m_piv; }
   auto& piv() { return m_piv; }
 
-  LayoutFree* get_layout() { return m_layout; }
-  void set_layout(LayoutFree* layout) { m_layout = layout; }
+  int render(place_t place) const;
 
-  std::optional<place_t> place() const;
+  std::optional<place_t> place(dim_t bounds) const;
 
 private:
+  render_f* m_renderer;
   pos_t m_pos;
   dim_t m_dim;
   piv_t m_piv;
-
-  LayoutFree* m_layout = nullptr;
 };
 
 }  // namespace display

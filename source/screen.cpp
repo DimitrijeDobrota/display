@@ -5,24 +5,24 @@
 namespace display
 {
 
-void Screen::set_layout(LayoutFree* layout)
+LayoutFree& Screen::set_layout(LayoutFree layout)
 {
-  if (m_layout != nullptr) {
-    m_layout->set_screen(nullptr);
-  }
+  m_layout.emplace(std::move(layout));
+  return m_layout.value();
+}
 
-  m_layout = layout;
-
-  if (m_layout != nullptr) {
-    m_layout->set_screen(this);
+void Screen::resize(dim_t new_dim)
+{
+  m_dim = new_dim;
+  if (m_layout.has_value()) {
+    m_layout->resize({}, m_dim);
   }
 }
 
-void Screen::resize(dim_t dim)
+void Screen::render() const
 {
-  m_dim = dim;
-  if (m_layout != nullptr) {
-    m_layout->recalc();
+  if (m_layout.has_value()) {
+    m_layout->render();
   }
 }
 

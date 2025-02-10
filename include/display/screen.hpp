@@ -1,11 +1,12 @@
 #pragma once
 
+#include <optional>
+
+#include "display/layout.hpp"
 #include "display/types.hpp"
 
 namespace display
 {
-
-class LayoutFree;
 
 class Screen
 {
@@ -17,15 +18,15 @@ public:
 
   const auto& dim() const { return m_dim; }
 
-  LayoutFree* get_layout() { return m_layout; }
-  void set_layout(LayoutFree* layout);
+  LayoutFree& set_layout(LayoutFree layout);
 
-  void resize(dim_t dim);
+  void resize(dim_t new_dim);
+  void render() const;
 
 private:
   dim_t m_dim;
 
-  LayoutFree* m_layout = nullptr;
+  std::optional<LayoutFree> m_layout;
 };
 
 }  // namespace display

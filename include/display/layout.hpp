@@ -7,12 +7,9 @@
 namespace display
 {
 
-class Screen;
-
 class LayoutFree
 {
 public:
-  using render_f = int(Window&);
   using recalc_f = void(LayoutFree&);
 
   LayoutFree(recalc_f f_recalc)  // NOLINT
@@ -20,24 +17,23 @@ public:
   {
   }
 
-  dim_t dim() const;
-
-  Screen* get_screen() { return m_screen; }
-  void set_screen(Screen* screen) { m_screen = screen; }
+  const pos_t& pos() const { return m_pos; }
+  const dim_t& dim() const { return m_dim; }
 
   const auto& operator[](std::size_t idx) const { return m_windows[idx]; }
   auto& operator[](std::size_t idx) { return m_windows[idx]; }
   void append(Window window);
 
-  void recalc();
-  int render(render_f renderer);
+  void resize(pos_t pos, dim_t dim);
+  int render() const;
 
 private:
-  std::vector<Window> m_windows;
-  bool m_is_sorted = true;
   recalc_f* m_recalc;
+  pos_t m_pos;
+  dim_t m_dim;
 
-  Screen* m_screen = nullptr;
+  std::vector<Window> m_windows;
+  mutable bool m_is_sorted = true;
 };
 
 class LayoutRigid
