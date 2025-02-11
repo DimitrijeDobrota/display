@@ -1,13 +1,16 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
+#include "display/screen.hpp"
+#include "display/types.hpp"
 #include "display/window.hpp"
 
 namespace display
 {
 
-class LayoutFree
+class LayoutFree : public Layout
 {
 public:
   using recalc_f = void(LayoutFree&);
@@ -17,29 +20,51 @@ public:
   {
   }
 
-  const pos_t& pos() const { return m_pos; }
-  const dim_t& dim() const { return m_dim; }
+  Window* operator[](std::size_t idx) { return m_windows[idx].get(); }
+  const Window* operator[](std::size_t idx) const
+  {
+    return m_windows[idx].get();
+  }
 
-  const auto& operator[](std::size_t idx) const { return m_windows[idx]; }
-  auto& operator[](std::size_t idx) { return m_windows[idx]; }
-  void append(Window window);
+  template<typename T, class... Args>
+  T& append(Args&&... args)
+  {
+    m_windows.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+    m_is_sorted = false;
+    return *dynamic_cast<T*>(m_windows.back().get());
+  }
 
-  void resize(pos_t pos, dim_t dim);
-  int render() const;
+  void resize(dim_t dim) override;
+  int render(pos_t pos) const override;
 
 private:
   recalc_f* m_recalc;
-  pos_t m_pos;
-  dim_t m_dim;
 
-  std::vector<Window> m_windows;
+  std::vector<std::unique_ptr<Window>> m_windows;
   mutable bool m_is_sorted = true;
 };
 
-class LayoutRigid
+class LayoutRigid : public Layout
 {
 public:
+  using recalc_f = void(LayoutRigid&);
+
+  LayoutRigid(recalc_f f_recalc)  // NOLINT
+      : m_recalc(f_recalc)
+  {
+  }
+
+  auto& screen1() { return m_screen1; }
+  auto& screen2() { return m_screen2; }
+
+  void resize(dim_t dim) override;
+  int render(pos_t pos) const override;
+
 private:
+  recalc_f* m_recalc;
+
+  Screen m_screen1;
+  Screen m_screen2;
 };
 
 }  // namespace display

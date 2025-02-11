@@ -7,7 +7,8 @@
 
 namespace
 {
-int renderer(const display::Window& win, display::place_t plc)
+
+void renderer(const display::Window& win, display::place_t plc)
 {
   using display::place_t;
 
@@ -25,25 +26,59 @@ int renderer(const display::Window& win, display::place_t plc)
   std::cout << std::flush;
 
   (void)win;
-
-  return 0;
 }
 
-void recalculator(display::LayoutFree& layout)
+void recalculator1(display::LayoutFree& layout)
 {
   const auto [width, height] = layout.dim();
   const display::sz_t midw = width / 2;
   const display::sz_t midh = height / 2;
 
-  layout[4].pos() = {0, 0};
-  layout[5].pos() = {midw, 0};
-  layout[6].pos() = {width, 0};
-  layout[7].pos() = {width, midh};
-  layout[0].pos() = {width, height};
-  layout[1].pos() = {midw, height};
-  layout[2].pos() = {0, height};
-  layout[3].pos() = {0, midh};
-  layout[8].pos() = {midw, midh};
+  layout[4]->pos() = {0, 0};
+  layout[5]->pos() = {midw, 0};
+  layout[6]->pos() = {width, 0};
+  layout[7]->pos() = {width, midh};
+  layout[0]->pos() = {width, height};
+  layout[1]->pos() = {midw, height};
+  layout[2]->pos() = {0, height};
+  layout[3]->pos() = {0, midh};
+  layout[8]->pos() = {midw, midh};
+}
+
+void recalculator2(display::LayoutFree& layout)
+{
+  const auto [width, height] = layout.dim();
+  const display::sz_t midw = width / 2;
+  const display::sz_t midh = height / 2;
+
+  layout[0]->pos() = {0, 0};
+  layout[1]->pos() = {midw, 0};
+  layout[2]->pos() = {width, 0};
+  layout[3]->pos() = {width, midh};
+  layout[4]->pos() = {width, height};
+  layout[5]->pos() = {midw, height};
+  layout[6]->pos() = {0, height};
+  layout[7]->pos() = {0, midh};
+  layout[8]->pos() = {midw, midh};
+}
+
+void fill(display::LayoutFree& layout)
+{
+  using display::pos_t, display::dim_t, display::piv_t;
+  using display::PvtX, display::PvtY;
+  using display::Window;
+
+  // clang-format off
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Top));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Top));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Top));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Center));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Bottom));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Bottom));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Bottom));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Center));
+  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Center));
+  // clang-format on
 }
 
 }  // namespace
@@ -51,30 +86,19 @@ void recalculator(display::LayoutFree& layout)
 int main()
 {
   try {
-    using display::Display;
-    using display::PvtX, display::PvtY;
+    using namespace display;  // NOLINT
 
     auto& display = Display::display();
-    auto& screen = display.screen();
-    auto& layout = screen.set_layout({recalculator});
 
-    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Top}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Top}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Top}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Center}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Right, PvtY::Bottom}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Bottom}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Bottom}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Left, PvtY::Center}});
-    layout.append({renderer, {}, {20, 10}, {PvtX::Center, PvtY::Center}});
+    auto& layout = display.screen().set_layout<LayoutRigid>(nullptr);
+    fill(layout.screen1().set_layout<LayoutFree>(recalculator1));
+    fill(layout.screen2().set_layout<LayoutFree>(recalculator2));
 
     for (display.set_resized(); true;) {
-      using display::event;
-
       const auto evnt = display.get_event();
       if (evnt.type() == event::Type::RESIZE) {
         std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
-        screen.render();
+        display.render();
         continue;
       }
 

@@ -8,20 +8,16 @@
 namespace display
 {
 
-void LayoutFree::append(Window window)
+void LayoutFree::resize(dim_t dim)
 {
-  m_windows.push_back(window);
-  m_is_sorted = false;
+  this->dim() = dim;
+
+  if (m_recalc != nullptr) {
+    m_recalc(*this);
+  }
 }
 
-void LayoutFree::resize(pos_t pos, dim_t dim)
-{
-  m_pos = pos;
-  m_dim = dim;
-  m_recalc(*this);
-}
-
-int LayoutFree::render() const
+int LayoutFree::render(pos_t pos) const
 {
   static std::vector<std::uint8_t> idxs;
 
@@ -32,24 +28,42 @@ int LayoutFree::render() const
         idxs.begin(),
         idxs.end(),
         [&](auto left, auto right)
-        { return m_windows[left].pos().z < m_windows[right].pos().z; });
+        { return m_windows[left]->pos().z < m_windows[right]->pos().z; });
     m_is_sorted = true;
   }
 
   for (const auto idx : idxs) {
-    const auto win = m_windows[idx];
-    const auto plc = win.place(m_dim);
+    const auto& win = m_windows[idx];
+    const auto plc = win->place(this->dim());
 
     if (!plc.has_value()) {
       continue;
     }
 
-    const auto res = win.render(plc.value());
-    if (res != 0) {
-      return res;
-    }
+    win->render(plc.value() + pos);
   }
 
+  return 0;
+}
+
+void LayoutRigid::resize(dim_t dim)
+{
+  this->dim() = dim;
+
+  const sz_t mid = this->dim().height / 2;
+  m_screen1.resize({dim.width, mid});
+  m_screen2.resize({dim.width, mid});
+
+  if (m_recalc != nullptr) {
+    m_recalc(*this);
+  }
+}
+
+int LayoutRigid::render(pos_t pos) const
+{
+  const sz_t mid = this->dim().height / 2;
+  m_screen1.render(pos + pos_t(0, 0));
+  m_screen2.render(pos + pos_t(0, mid + 1));
   return 0;
 }
 

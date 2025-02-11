@@ -4,12 +4,13 @@
 
 #include "display/types.hpp"
 
-namespace display {
+namespace display
+{
 
 class Window
 {
 public:
-  using render_f = int(const Window&, place_t place);
+  using render_f = void(const Window&, place_t place);
 
   Window(render_f frender, pos_t pos, dim_t dim, piv_t piv = {})
       : m_renderer(frender)
@@ -18,6 +19,14 @@ public:
       , m_piv(piv)
   {
   }
+
+  Window(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
+
+  Window(Window&&) = default;
+  Window& operator=(Window&&) = default;
+
+  virtual ~Window() = default;
 
   const auto& pos() const { return m_pos; }
   auto& pos() { return m_pos; }
@@ -28,7 +37,7 @@ public:
   const auto& piv() const { return m_piv; }
   auto& piv() { return m_piv; }
 
-  int render(place_t place) const;
+  virtual void render(place_t place) const;
 
   std::optional<place_t> place(dim_t bounds) const;
 

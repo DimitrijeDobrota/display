@@ -27,6 +27,8 @@ public:
   void set_resized();
   void reset_resized();
 
+  void render();
+
 private:
   Display();
   ~Display();

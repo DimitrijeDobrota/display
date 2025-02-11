@@ -5,9 +5,11 @@
 namespace display
 {
 
-int Window::render(place_t place) const
+void Window::render(place_t place) const
 {
-  return m_renderer(*this, place);
+  if (m_renderer != nullptr) {
+    m_renderer(*this, place);
+  }
 }
 
 std::optional<place_t> Window::place(dim_t bounds) const

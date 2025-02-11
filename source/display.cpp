@@ -86,4 +86,9 @@ bool Display::get_resized() const
   return m_is_resized;
 }
 
+void Display::render()
+{
+  m_screen.render({0, 0});
+}
+
 }  // namespace display

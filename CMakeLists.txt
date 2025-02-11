@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.13
+    VERSION 0.1.14
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
