@@ -4,12 +4,14 @@
 
 #include "alec/alec.hpp"
 #include "display/display.hpp"
-#include "display/layout.hpp"
+#include "display/layout_free.hpp"
+#include "display/layout_rigid.hpp"
+#include "display/window_pivot.hpp"
 
 namespace
 {
 
-void renderer(const display::Window& win, display::place_t plc)
+void renderer(const display::WindowPivot& win, display::place_t plc)
 {
   using display::place_t;
 
@@ -33,18 +35,18 @@ void fill(display::LayoutFree& layout)
 {
   using display::pos_t, display::dim_t, display::piv_t;
   using display::PvtX, display::PvtY;
-  using display::Window;
+  using display::WindowPivot;
 
   // clang-format off
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Top));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Top));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Top));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Center));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Bottom));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Bottom));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Bottom));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Center));
-  layout.append<Window>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Center));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Top));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Top));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Top));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Center));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Right, PvtY::Bottom));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Bottom));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Bottom));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Left, PvtY::Center));
+  layout.append<WindowPivot>(renderer, pos_t(), dim_t(10, 5), piv_t(PvtX::Center, PvtY::Center));
   // clang-format on
 }
 
@@ -65,15 +67,15 @@ int main()
       const display::sz_t midw = width / 2;
       const display::sz_t midh = height / 2;
 
-      layout[(start + 0) % 8]->pos() = {0, 0};
-      layout[(start + 1) % 8]->pos() = {midw, 0};
-      layout[(start + 2) % 8]->pos() = {width, 0};
-      layout[(start + 3) % 8]->pos() = {width, midh};
-      layout[(start + 4) % 8]->pos() = {width, height};
-      layout[(start + 5) % 8]->pos() = {midw, height};
-      layout[(start + 6) % 8]->pos() = {0, height};
-      layout[(start + 7) % 8]->pos() = {0, midh};
-      layout[8]->pos() = {midw, midh};
+      layout.get<WindowPivot>((start + 0) % 8).pos() = {0, 0};
+      layout.get<WindowPivot>((start + 1) % 8).pos() = {midw, 0};
+      layout.get<WindowPivot>((start + 2) % 8).pos() = {width, 0};
+      layout.get<WindowPivot>((start + 3) % 8).pos() = {width, midh};
+      layout.get<WindowPivot>((start + 4) % 8).pos() = {width, height};
+      layout.get<WindowPivot>((start + 5) % 8).pos() = {midw, height};
+      layout.get<WindowPivot>((start + 6) % 8).pos() = {0, height};
+      layout.get<WindowPivot>((start + 7) % 8).pos() = {0, midh};
+      layout.get<WindowPivot>(8).pos() = {midw, midh};
     };
 
     auto& layout1 =

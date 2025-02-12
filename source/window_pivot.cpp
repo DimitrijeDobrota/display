@@ -1,18 +1,18 @@
-#include "display/window.hpp"
+#include "display/window_pivot.hpp"
 
 #include "display/utility.hpp"
 
 namespace display
 {
 
-void Window::render(place_t place) const
+void WindowPivot::render(place_t place) const
 {
   if (m_renderer != nullptr) {
     m_renderer(*this, place);
   }
 }
 
-std::optional<place_t> Window::place(dim_t bounds) const
+std::optional<place_t> WindowPivot::place(dim_t bounds)
 {
   const auto [cols, rows] = bounds;
   const auto [posx, posy, _] = pos();

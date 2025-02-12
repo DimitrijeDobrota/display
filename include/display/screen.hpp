@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "display/layout.hpp"
 #include "display/types.hpp"
 
 namespace display
@@ -29,6 +30,18 @@ public:
   T& set_layout(Args&&... args)
   {
     m_layout = std::make_unique<T>(std::forward<Args>(args)...);
+    return get_layout<T>();
+  }
+
+  template<typename T>
+  const T& get_layout() const
+  {
+    return *dynamic_cast<T*>(m_layout.get());
+  }
+
+  template<typename T>
+  T& get_layout()
+  {
     return *dynamic_cast<T*>(m_layout.get());
   }
 
