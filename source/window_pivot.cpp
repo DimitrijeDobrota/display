@@ -15,7 +15,7 @@ void WindowPivot::render(place_t place) const
 std::optional<place_t> WindowPivot::place(dim_t bounds)
 {
   const auto [cols, rows] = bounds;
-  const auto [posx, posy, _] = pos();
+  const auto [posx, posy] = pos();
 
   if (posx > cols || posy > rows) {
     return {};

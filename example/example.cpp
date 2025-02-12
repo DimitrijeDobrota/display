@@ -59,7 +59,6 @@ int main()
     using namespace display;  // NOLINT
 
     auto& display = Display::display();
-    auto& layout = display.screen().set_layout<LayoutRigid>(nullptr);
 
     const auto recalc = [](std::size_t start, LayoutFree& layout)
     {
@@ -77,6 +76,8 @@ int main()
       layout.get<WindowPivot>((start + 7) % 8).pos() = {0, midh};
       layout.get<WindowPivot>(8).pos() = {midw, midh};
     };
+
+    auto& layout = display.screen().set_layout<LayoutRigid>(nullptr);
 
     auto& layout1 =
         layout.screen1().set_layout<LayoutFree>(std::bind(recalc, 4U, _1));

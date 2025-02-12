@@ -28,23 +28,22 @@ struct dim_t
 
 struct pos_t
 {
-  pos_t(sz_t xpos = 0, sz_t ypos = 0, sz_t zpos = 0)  // NOLINT
+  pos_t(sz_t xpos = 0, sz_t ypos = 0)  // NOLINT
       : x(xpos)
       , y(ypos)
-      , z(zpos)
   {
   }
 
   pos_t operator+(pos_t rhs) const
   {
-    return {static_cast<std::uint16_t>(x + rhs.x),
-            static_cast<std::uint16_t>(y + rhs.y),
-            static_cast<std::uint16_t>(z + rhs.z)};
+    return {
+        static_cast<std::uint16_t>(x + rhs.x),
+        static_cast<std::uint16_t>(y + rhs.y),
+    };
   }
 
   sz_t x;
   sz_t y;
-  sz_t z;
 };
 
 struct place_t

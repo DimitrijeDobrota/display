@@ -28,7 +28,6 @@ public:
   T& append(Args&&... args)
   {
     m_wins.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
-    m_is_sorted = false;
     return get<T>(m_wins.size() - 1);
   }
 
@@ -51,7 +50,6 @@ private:
   recalc_f m_recalc;
 
   std::vector<std::unique_ptr<Window>> m_wins;
-  mutable bool m_is_sorted = true;
 };
 
 }  // namespace display
