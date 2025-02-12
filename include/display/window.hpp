@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <optional>
 
 #include "display/types.hpp"
@@ -10,10 +11,10 @@ namespace display
 class Window
 {
 public:
-  using render_f = void(const Window&, place_t place);
+  using render_f = std::function<void(const Window&, place_t place)>;
 
   Window(render_f frender, pos_t pos, dim_t dim, piv_t piv = {})
-      : m_renderer(frender)
+      : m_renderer(std::move(frender))
       , m_pos(pos)
       , m_dim(dim)
       , m_piv(piv)
@@ -42,7 +43,7 @@ public:
   std::optional<place_t> place(dim_t bounds) const;
 
 private:
-  render_f* m_renderer;
+  render_f m_renderer;
   pos_t m_pos;
   dim_t m_dim;
   piv_t m_piv;

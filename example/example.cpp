@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -28,40 +29,6 @@ void renderer(const display::Window& win, display::place_t plc)
   (void)win;
 }
 
-void recalculator1(display::LayoutFree& layout)
-{
-  const auto [width, height] = layout.dim();
-  const display::sz_t midw = width / 2;
-  const display::sz_t midh = height / 2;
-
-  layout[4]->pos() = {0, 0};
-  layout[5]->pos() = {midw, 0};
-  layout[6]->pos() = {width, 0};
-  layout[7]->pos() = {width, midh};
-  layout[0]->pos() = {width, height};
-  layout[1]->pos() = {midw, height};
-  layout[2]->pos() = {0, height};
-  layout[3]->pos() = {0, midh};
-  layout[8]->pos() = {midw, midh};
-}
-
-void recalculator2(display::LayoutFree& layout)
-{
-  const auto [width, height] = layout.dim();
-  const display::sz_t midw = width / 2;
-  const display::sz_t midh = height / 2;
-
-  layout[0]->pos() = {0, 0};
-  layout[1]->pos() = {midw, 0};
-  layout[2]->pos() = {width, 0};
-  layout[3]->pos() = {width, midh};
-  layout[4]->pos() = {width, height};
-  layout[5]->pos() = {midw, height};
-  layout[6]->pos() = {0, height};
-  layout[7]->pos() = {0, midh};
-  layout[8]->pos() = {midw, midh};
-}
-
 void fill(display::LayoutFree& layout)
 {
   using display::pos_t, display::dim_t, display::piv_t;
@@ -86,13 +53,36 @@ void fill(display::LayoutFree& layout)
 int main()
 {
   try {
+    using namespace std::placeholders;  // NOLINT
     using namespace display;  // NOLINT
 
     auto& display = Display::display();
-
     auto& layout = display.screen().set_layout<LayoutRigid>(nullptr);
-    fill(layout.screen1().set_layout<LayoutFree>(recalculator1));
-    fill(layout.screen2().set_layout<LayoutFree>(recalculator2));
+
+    const auto recalc = [](std::size_t start, LayoutFree& layout)
+    {
+      const auto [width, height] = layout.dim();
+      const display::sz_t midw = width / 2;
+      const display::sz_t midh = height / 2;
+
+      layout[(start + 0) % 8]->pos() = {0, 0};
+      layout[(start + 1) % 8]->pos() = {midw, 0};
+      layout[(start + 2) % 8]->pos() = {width, 0};
+      layout[(start + 3) % 8]->pos() = {width, midh};
+      layout[(start + 4) % 8]->pos() = {width, height};
+      layout[(start + 5) % 8]->pos() = {midw, height};
+      layout[(start + 6) % 8]->pos() = {0, height};
+      layout[(start + 7) % 8]->pos() = {0, midh};
+      layout[8]->pos() = {midw, midh};
+    };
+
+    auto& layout1 =
+        layout.screen1().set_layout<LayoutFree>(std::bind(recalc, 4U, _1));
+    fill(layout1);
+
+    auto& layout2 =
+        layout.screen2().set_layout<LayoutFree>(std::bind(recalc, 0U, _1));
+    fill(layout2);
 
     for (display.set_resized(); true;) {
       const auto evnt = display.get_event();

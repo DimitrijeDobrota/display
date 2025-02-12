@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -13,10 +14,10 @@ namespace display
 class LayoutFree : public Layout
 {
 public:
-  using recalc_f = void(LayoutFree&);
+  using recalc_f = std::function<void(LayoutFree&)>;
 
   LayoutFree(recalc_f f_recalc)  // NOLINT
-      : m_recalc(f_recalc)
+      : m_recalc(std::move(f_recalc))
   {
   }
 
@@ -38,7 +39,7 @@ public:
   int render(pos_t pos) const override;
 
 private:
-  recalc_f* m_recalc;
+  recalc_f m_recalc;
 
   std::vector<std::unique_ptr<Window>> m_windows;
   mutable bool m_is_sorted = true;
@@ -47,10 +48,10 @@ private:
 class LayoutRigid : public Layout
 {
 public:
-  using recalc_f = void(LayoutRigid&);
+  using recalc_f = std::function<void(LayoutRigid&)>;
 
   LayoutRigid(recalc_f f_recalc)  // NOLINT
-      : m_recalc(f_recalc)
+      : m_recalc(std::move(f_recalc))
   {
   }
 
@@ -61,7 +62,7 @@ public:
   int render(pos_t pos) const override;
 
 private:
-  recalc_f* m_recalc;
+  recalc_f m_recalc;
 
   Screen m_screen1;
   Screen m_screen2;
