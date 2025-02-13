@@ -10,44 +10,69 @@
 namespace
 {
 
-void renderer(const display::WindowPivot& win, display::place_t plc)
+class WindowCustom : public display::WindowPivot
 {
-  using display::place_t;
-
-  static int color_red = 0;
-  color_red = (color_red + 25) % 256;
-
-  const auto [start, end] = plc;
-
-  std::cout << alec::background(color_red, 65, 65);
-  for (auto ypos = start.y; ypos < end.y; ypos++) {
-    std::cout << alec::cursor_position(ypos + 1, start.x + 1);
-    std::cout << std::string(end.x - start.x, ' ');
+public:
+  WindowCustom(display::dim_t dim, display::piv_t piv)
+      : WindowPivot(display::pos_t(), dim, piv)
+  {
   }
-  std::cout << alec::background_v<alec::Color::DEFAULT>;
-  std::cout << std::flush;
 
-  (void)win;
-}
+  void render(display::place_t plc) const override
+  {
+    static int color_red = 0;
+    color_red = (color_red + 25) % 256;
 
-void fill(display::LayoutFree& layout)
+    const auto [start, end] = plc;
+
+    std::cout << alec::background(color_red, 65, 65);
+    for (auto ypos = start.y; ypos < end.y; ypos++) {
+      std::cout << alec::cursor_position(ypos + 1, start.x + 1);
+      std::cout << std::string(end.x - start.x, ' ');
+    }
+    std::cout << alec::background_v<alec::Color::DEFAULT>;
+    std::cout << std::flush;
+  }
+};
+
+class LayoutCustom : public display::LayoutFree
 {
-  using display::pos_t, display::dim_t, display::piv_t;
-  using display::PvtX, display::PvtY;
-  using display::WindowPivot;
+public:
+  LayoutCustom()
+  {
+    using display::dim_t, display::piv_t;
+    using display::PvtX, display::PvtY;
 
-  // clang-format off
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Left, PvtY::Top));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Top));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Right, PvtY::Top));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Right, PvtY::Center));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Right, PvtY::Bottom));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Left, PvtY::Bottom));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Left, PvtY::Center));
-  layout.append<WindowPivot>(renderer, pos_t(), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
-  // clang-format on
-}
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Top));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Top));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Top));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Center));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Bottom));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Bottom));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Center));
+    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
+  }
+
+  void resize(display::dim_t dim) override
+  {
+    LayoutFree::resize(dim);
+
+    const auto [width, height] = dim;
+    const display::sz_t midw = width / 2;
+    const display::sz_t midh = height / 2;
+
+    get<WindowCustom>(0).pos() = {0, 0};
+    get<WindowCustom>(1).pos() = {midw, 0};
+    get<WindowCustom>(2).pos() = {width, 0};
+    get<WindowCustom>(3).pos() = {width, midh};
+    get<WindowCustom>(4).pos() = {width, height};
+    get<WindowCustom>(5).pos() = {midw, height};
+    get<WindowCustom>(6).pos() = {0, height};
+    get<WindowCustom>(7).pos() = {0, midh};
+    get<WindowCustom>(8).pos() = {midw, midh};
+  }
+};
 
 }  // namespace
 
@@ -56,23 +81,6 @@ int main()
   try {
     using namespace std::placeholders;  // NOLINT
     using namespace display;  // NOLINT
-
-    const auto recalc = [](LayoutFree& layout)
-    {
-      const auto [width, height] = layout.dim();
-      const display::sz_t midw = width / 2;
-      const display::sz_t midh = height / 2;
-
-      layout.get<WindowPivot>(0).pos() = {0, 0};
-      layout.get<WindowPivot>(1).pos() = {midw, 0};
-      layout.get<WindowPivot>(2).pos() = {width, 0};
-      layout.get<WindowPivot>(3).pos() = {width, midh};
-      layout.get<WindowPivot>(4).pos() = {width, height};
-      layout.get<WindowPivot>(5).pos() = {midw, height};
-      layout.get<WindowPivot>(6).pos() = {0, height};
-      layout.get<WindowPivot>(7).pos() = {0, midh};
-      layout.get<WindowPivot>(8).pos() = {midw, midh};
-    };
 
     auto& display = Display::display();
 
@@ -84,12 +92,12 @@ int main()
     };
     // clang-format on
 
-    auto& layout = display.screen().set_layout<LayoutRigid>(split, nullptr);
-    fill(layout[0].set_layout<LayoutFree>(recalc));
-    fill(layout[1].set_layout<LayoutFree>(recalc));
-    fill(layout[2].set_layout<LayoutFree>(recalc));
-    fill(layout[3].set_layout<LayoutFree>(recalc));
-    fill(layout[4].set_layout<LayoutFree>(recalc));
+    auto& layout = display.screen().set_layout<LayoutRigid>(split);
+    layout[0].set_layout<LayoutCustom>();
+    layout[1].set_layout<LayoutCustom>();
+    layout[2].set_layout<LayoutCustom>();
+    layout[3].set_layout<LayoutCustom>();
+    layout[4].set_layout<LayoutCustom>();
 
     for (display.set_resized(); true;) {
       const auto evnt = display.get_event();

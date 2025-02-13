@@ -5,13 +5,6 @@
 namespace display
 {
 
-void WindowPivot::render(place_t place) const
-{
-  if (m_renderer != nullptr) {
-    m_renderer(*this, place);
-  }
-}
-
 std::optional<place_t> WindowPivot::place(dim_t bounds)
 {
   const auto [cols, rows] = bounds;

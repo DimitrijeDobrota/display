@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <vector>
 
 #include "display/screen.hpp"
@@ -12,10 +11,9 @@ namespace display
 class LayoutRigid : public Layout
 {
 public:
-  using recalc_f = std::function<void(LayoutRigid&)>;
   using layout_t = std::vector<std::vector<std::uint8_t>>;
 
-  LayoutRigid(layout_t layout, recalc_f f_recalc);
+  LayoutRigid(layout_t layout);  // NOLINT
 
   const auto& operator[](std::size_t idx) const { return m_recs[idx].screen; }
   auto& operator[](std::size_t idx) { return m_recs[idx].screen; }
@@ -29,7 +27,6 @@ private:
 
   std::size_t count_and_pad(layout_t& layout) const;
 
-  recalc_f m_recalc;
   dim_t m_grid;
 
   struct record_t

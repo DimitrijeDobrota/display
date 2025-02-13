@@ -6,9 +6,8 @@
 namespace display
 {
 
-LayoutRigid::LayoutRigid(layout_t layout, recalc_f f_recalc)
-    : m_recalc(std::move(f_recalc))
-    , m_grid(static_cast<sz_t>(layout[0].size()),
+LayoutRigid::LayoutRigid(layout_t layout)
+    : m_grid(static_cast<sz_t>(layout[0].size()),
              static_cast<sz_t>(layout.size()))
     , m_recs(count_and_pad(layout))
 {
@@ -95,15 +94,11 @@ auto LayoutRigid::calc_height(dim_t share) const
 
 void LayoutRigid::resize(dim_t dim)
 {
-  this->dim() = dim;
+  Layout::resize(dim);
 
   for (auto& [screen, _, rdim] : m_recs) {
     const dim_t size = {calc_width(rdim), calc_height(rdim)};
     screen.resize(size);
-  }
-
-  if (m_recalc != nullptr) {
-    m_recalc(*this);
   }
 }
 

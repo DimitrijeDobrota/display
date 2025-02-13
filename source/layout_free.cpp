@@ -3,15 +3,6 @@
 namespace display
 {
 
-void LayoutFree::resize(dim_t dim)
-{
-  this->dim() = dim;
-
-  if (m_recalc != nullptr) {
-    m_recalc(*this);
-  }
-}
-
 void LayoutFree::render(pos_t pos) const
 {
   for (const auto& win : m_wins) {

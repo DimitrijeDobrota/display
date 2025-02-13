@@ -14,13 +14,6 @@ namespace display
 class LayoutFree : public Layout
 {
 public:
-  using recalc_f = std::function<void(LayoutFree&)>;
-
-  LayoutFree(recalc_f f_recalc)  // NOLINT
-      : m_recalc(std::move(f_recalc))
-  {
-  }
-
   Window* operator[](std::size_t idx) { return m_wins[idx].get(); }
   const Window* operator[](std::size_t idx) const { return m_wins[idx].get(); }
 
@@ -43,12 +36,9 @@ public:
     return *dynamic_cast<T*>(m_wins[idx].get());
   }
 
-  void resize(dim_t dim) override;
   void render(pos_t pos) const override;
 
 private:
-  recalc_f m_recalc;
-
   std::vector<std::unique_ptr<Window>> m_wins;
 };
 
