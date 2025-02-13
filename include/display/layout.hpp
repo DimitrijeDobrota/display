@@ -22,7 +22,7 @@ public:
   dim_t& dim() { return m_dim; }
 
   virtual void resize(dim_t dim) = 0;
-  virtual int render(pos_t pos) const = 0;
+  virtual void render(pos_t pos) const = 0;
 
 private:
   dim_t m_dim;

@@ -2,6 +2,7 @@
 
 namespace display
 {
+
 void LayoutFree::resize(dim_t dim)
 {
   this->dim() = dim;
@@ -11,7 +12,7 @@ void LayoutFree::resize(dim_t dim)
   }
 }
 
-int LayoutFree::render(pos_t pos) const
+void LayoutFree::render(pos_t pos) const
 {
   for (const auto& win : m_wins) {
     const auto plc = win->place(this->dim());
@@ -22,7 +23,6 @@ int LayoutFree::render(pos_t pos) const
 
     win->render(plc.value() + pos);
   }
-
-  return 0;
 }
+
 }  // namespace display

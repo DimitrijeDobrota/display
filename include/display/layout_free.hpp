@@ -44,7 +44,7 @@ public:
   }
 
   void resize(dim_t dim) override;
-  int render(pos_t pos) const override;
+  void render(pos_t pos) const override;
 
 private:
   recalc_f m_recalc;
