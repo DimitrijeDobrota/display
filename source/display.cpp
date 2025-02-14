@@ -28,7 +28,7 @@ Display& Display::display()
 }
 
 Display::Display()
-    : m_screen(alec::get_screen_size())
+    : m_screen(apos_t(0, 0))
 {
   struct sigaction old_sig_action = {};
   sigaction(SIGWINCH, nullptr, &old_sig_action);
@@ -72,7 +72,7 @@ event Display::get_event()  // NOLINT
 
 void Display::set_resized()
 {
-  m_screen.resize(alec::get_screen_size());
+  m_screen.resize(apos_t(0, 0), alec::get_screen_size());
   m_is_resized = true;
 }
 
@@ -88,7 +88,7 @@ bool Display::get_resized() const
 
 void Display::render()
 {
-  m_screen.render({0, 0});
+  m_screen.render();
 }
 
 }  // namespace display

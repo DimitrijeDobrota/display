@@ -26,7 +26,7 @@ public:
   auto& piv() { return m_piv; }
 
   std::optional<place_t> place(dim_t bounds) override;
-  void render(place_t place) const override = 0;
+  void render(aplace_t place) const override = 0;
 
 private:
   pos_t m_pos;

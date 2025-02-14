@@ -7,7 +7,8 @@ namespace display
 {
 
 LayoutRigid::LayoutRigid(layout_t layout)
-    : m_grid(static_cast<sz_t>(layout[0].size()),
+    : Layout(apos_t(0, 0))
+    , m_grid(static_cast<sz_t>(layout[0].size()),
              static_cast<sz_t>(layout.size()))
     , m_recs(count_and_pad(layout))
 {
@@ -92,22 +93,22 @@ auto LayoutRigid::calc_height(dim_t share) const
   return static_cast<sz_t>(dim().height / m_grid.height * share.height);
 }
 
-void LayoutRigid::resize(dim_t dim)
+void LayoutRigid::resize(apos_t apos, dim_t dim)
 {
-  Layout::resize(dim);
+  Layout::resize(apos, dim);
 
-  for (auto& [screen, _, rdim] : m_recs) {
+  for (auto& [screen, start, rdim] : m_recs) {
     const dim_t size = {calc_width(rdim), calc_height(rdim)};
-    screen.resize(size);
+    const pos_t rel = {calc_width(start), calc_height(start)};
+    const apos_t abs = this->apos() + rel;
+    screen.resize(abs, size);
   }
 }
 
-void LayoutRigid::render(pos_t pos) const
+void LayoutRigid::render() const
 {
-  for (const auto& [screen, start, _] : m_recs) {
-    const pos_t rel = {calc_width(start), calc_height(start)};
-    const pos_t abs = pos + rel;
-    screen.render(abs);
+  for (const auto& [screen, _, __] : m_recs) {
+    screen.render();
   }
 }
 

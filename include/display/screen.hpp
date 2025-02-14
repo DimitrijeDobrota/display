@@ -11,8 +11,8 @@ namespace display
 class Screen
 {
 public:
-  Screen(dim_t dim = {})  // NOLINT
-      : m_dim(dim)
+  explicit Screen(apos_t apos)
+      : m_apos(apos)
   {
   }
 
@@ -23,8 +23,6 @@ public:
   Screen& operator=(Screen&&) = default;
 
   ~Screen() = default;
-
-  const auto& dim() const { return m_dim; }
 
   template<typename T, class... Args>
   T& set_layout(Args&&... args)
@@ -45,10 +43,13 @@ public:
     return *dynamic_cast<T*>(m_layout.get());
   }
 
-  void resize(dim_t dim);
-  void render(pos_t pos) const;
+  bool has_layout() const { return m_layout != nullptr; }
+
+  void resize(apos_t apos, dim_t dim);
+  void render() const;
 
 private:
+  apos_t m_apos;
   dim_t m_dim;
 
   std::unique_ptr<Layout> m_layout;

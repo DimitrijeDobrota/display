@@ -18,12 +18,12 @@ public:
   {
   }
 
-  void render(display::place_t plc) const override
+  void render(display::aplace_t aplc) const override
   {
     static int color_red = 0;
     color_red = (color_red + 25) % 256;
 
-    const auto [start, end] = plc;
+    const auto [start, end] = aplc;
 
     std::cout << alec::background(color_red, 65, 65);
     for (auto ypos = start.y; ypos < end.y; ypos++) {
@@ -54,9 +54,9 @@ public:
     append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
   }
 
-  void resize(display::dim_t dim) override
+  void resize(display::apos_t apos, display::dim_t dim) override
   {
-    LayoutFree::resize(dim);
+    LayoutFree::resize(apos, dim);
 
     const auto [width, height] = dim;
     const display::sz_t midw = width / 2;
@@ -79,7 +79,6 @@ public:
 int main()
 {
   try {
-    using namespace std::placeholders;  // NOLINT
     using namespace display;  // NOLINT
 
     auto& display = Display::display();

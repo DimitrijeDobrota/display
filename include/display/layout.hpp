@@ -8,23 +8,31 @@ namespace display
 class Layout
 {
 public:
-  Layout() = default;
+  explicit Layout(apos_t apos)
+      : m_apos(apos)
+  {
+  }
 
   Layout(const Layout&) = delete;
   Layout& operator=(const Layout&) = delete;
 
-  Layout(Layout&&) = delete;
-  Layout& operator=(Layout&&) = delete;
+  Layout(Layout&&) = default;
+  Layout& operator=(Layout&&) = default;
 
   virtual ~Layout() = default;
 
+  virtual void resize(apos_t apos, dim_t dim) { m_apos = apos, m_dim = dim; }
+  virtual void render() const = 0;
+
+protected:
   const dim_t& dim() const { return m_dim; }
   dim_t& dim() { return m_dim; }
 
-  virtual void resize(dim_t dim) { m_dim = dim; }
-  virtual void render(pos_t pos) const = 0;
+  const apos_t& apos() const { return m_apos; }
+  apos_t& apos() { return m_apos; }
 
 private:
+  apos_t m_apos;
   dim_t m_dim;
 };
 

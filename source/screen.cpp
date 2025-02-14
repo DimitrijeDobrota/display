@@ -3,18 +3,20 @@
 namespace display
 {
 
-void Screen::resize(dim_t dim)
+void Screen::resize(apos_t apos, dim_t dim)
 {
+  m_apos = apos;
   m_dim = dim;
-  if (m_layout != nullptr) {
-    m_layout->resize(m_dim);
+
+  if (has_layout()) {
+    m_layout->resize(apos, m_dim);
   }
 }
 
-void Screen::render(pos_t pos)  const
+void Screen::render() const
 {
-  if (m_layout != nullptr) {
-    m_layout->render(pos);
+  if (has_layout()) {
+    m_layout->render();
   }
 }
 

@@ -3,16 +3,16 @@
 namespace display
 {
 
-void LayoutFree::render(pos_t pos) const
+void LayoutFree::render() const
 {
   for (const auto& win : m_wins) {
-    const auto plc = win->place(this->dim());
+    const auto plc = win->place(dim());
 
     if (!plc.has_value()) {
       continue;
     }
 
-    win->render(plc.value() + pos);
+    win->render(apos() + plc.value());
   }
 }
 

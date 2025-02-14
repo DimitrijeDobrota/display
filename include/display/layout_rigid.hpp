@@ -18,8 +18,8 @@ public:
   const auto& operator[](std::size_t idx) const { return m_recs[idx].screen; }
   auto& operator[](std::size_t idx) { return m_recs[idx].screen; }
 
-  void resize(dim_t dim) override;
-  void render(pos_t pos) const override;
+  void resize(apos_t apos, dim_t dim) override;
+  void render() const override;
 
 private:
   auto calc_width(dim_t share) const;
@@ -31,6 +31,11 @@ private:
 
   struct record_t
   {
+    record_t()
+        : screen(apos_t(0, 0))
+    {
+    }
+
     Screen screen;
     dim_t start = {0xFFFF, 0xFFFF};
     dim_t dim;
