@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.22
+    VERSION 0.1.23
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
@@ -23,6 +23,7 @@ add_library(
     source/screen.cpp
     # ---- utility
     source/layout_free.cpp
+    source/layout_pivot.cpp
     source/layout_rigid.cpp
     source/window_pivot.cpp
 )

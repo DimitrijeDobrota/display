@@ -22,4 +22,6 @@ endfunction()
 
 add_example(example)
 
+add_subdirectory(navig)
+
 add_folders(Example)
