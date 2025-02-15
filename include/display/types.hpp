@@ -3,8 +3,12 @@
 #include <cstdint>
 #include <utility>
 
+#include <alec/alec.hpp>
+
 namespace display
 {
+
+using event = alec::event;
 
 using sz_t = std::uint16_t;
 
@@ -37,9 +41,14 @@ struct pos_t
   pos_t operator+(pos_t rhs) const
   {
     return {
-        static_cast<std::uint16_t>(x + rhs.x),
-        static_cast<std::uint16_t>(y + rhs.y),
+        static_cast<sz_t>(x + rhs.x),
+        static_cast<sz_t>(y + rhs.y),
     };
+  }
+
+  dim_t operator-(pos_t rhs) const
+  {
+    return {static_cast<sz_t>(x - rhs.x), static_cast<sz_t>(y - rhs.y)};
   }
 
   sz_t x;
@@ -57,45 +66,19 @@ struct apos_t
   apos_t operator+(pos_t rhs) const
   {
     return {
-        static_cast<std::uint16_t>(x + rhs.x),
-        static_cast<std::uint16_t>(y + rhs.y),
+        static_cast<sz_t>(x + rhs.x),
+        static_cast<sz_t>(y + rhs.y),
     };
+  }
+
+  dim_t operator-(apos_t rhs) const
+  {
+    return {static_cast<sz_t>(rhs.x - x), static_cast<sz_t>(rhs.y - y)};
   }
 
   sz_t x;
   sz_t y;
 };
-
-struct place_t
-{
-  place_t(pos_t pstart = {}, pos_t pend = {})  // NOLINT
-      : start(pstart)
-      , end(pend)
-  {
-  }
-
-  place_t operator+(pos_t pos) const { return {start + pos, end + pos}; }
-
-  pos_t start;
-  pos_t end;
-};
-
-struct aplace_t
-{
-  aplace_t(apos_t astart, apos_t aend)  // NOLINT
-      : start(astart)
-      , end(aend)
-  {
-  }
-
-  apos_t start;
-  apos_t end;
-};
-
-inline aplace_t operator+(apos_t apos, place_t plc)
-{
-  return {apos + plc.start, apos + plc.end};
-}
 
 enum class PvtX : std::uint8_t
 {

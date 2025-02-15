@@ -23,6 +23,7 @@ public:
 
   virtual void resize(apos_t apos, dim_t dim) { m_apos = apos, m_dim = dim; }
   virtual void render() const = 0;
+  virtual void input(event& evnt) = 0;
 
 protected:
   const dim_t& dim() const { return m_dim; }

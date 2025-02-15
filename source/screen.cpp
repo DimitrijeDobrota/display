@@ -20,4 +20,11 @@ void Screen::render() const
   }
 }
 
+void Screen::input(event& evnt)
+{
+  if (has_layout()) {
+    m_layout->input(evnt);
+  }
+}
+
 }  // namespace display

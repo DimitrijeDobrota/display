@@ -20,8 +20,9 @@ public:
 
   virtual ~Window() = default;
 
-  virtual std::optional<place_t> place(dim_t bounds) = 0;
-  virtual void render(aplace_t place) const = 0;
+  virtual void resize(apos_t apos, dim_t dim) = 0;
+  virtual void render() const = 0;
+  virtual void input(event& /* unused */) {}
 };
 
 }  // namespace display

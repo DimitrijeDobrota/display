@@ -39,7 +39,9 @@ public:
     return *dynamic_cast<T*>(m_wins[idx].get());
   }
 
+  void resize(apos_t apos, dim_t dim) override;
   void render() const override;
+  void input(event& evnt) override;
 
 private:
   std::vector<std::unique_ptr<Window>> m_wins;

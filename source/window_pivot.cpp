@@ -5,16 +5,16 @@
 namespace display
 {
 
-std::optional<place_t> WindowPivot::place(dim_t bounds)
+void WindowPivot::resize(apos_t apos, dim_t dim)
 {
-  const auto [cols, rows] = bounds;
+  const auto [cols, rows] = dim;
   const auto [posx, posy] = pos();
 
   if (posx > cols || posy > rows) {
-    return {};
+    return;
   }
 
-  const auto [wdth, hght] = dim();
+  const auto [wdth, hght] = this->dim();
   const display::sz_t zero = 0;
   const sz_t wdthm = wdth / 2;
   const sz_t hghtm = hght / 2;
@@ -52,7 +52,8 @@ std::optional<place_t> WindowPivot::place(dim_t bounds)
       break;
   }
 
-  return place_t(start, end);
+  m_apos = apos + start;
+  m_adim = end - start;
 }
 
 }  // namespace display

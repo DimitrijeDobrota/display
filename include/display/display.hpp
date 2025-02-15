@@ -7,8 +7,6 @@
 namespace display
 {
 
-using event = alec::event;
-
 class Display
 {
 public:

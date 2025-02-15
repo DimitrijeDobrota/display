@@ -13,6 +13,8 @@ public:
       : m_pos(pos)
       , m_dim(dim)
       , m_piv(piv)
+      , m_apos(0, 0)
+      , m_adim(0, 0)
   {
   }
 
@@ -25,13 +27,22 @@ public:
   const auto& piv() const { return m_piv; }
   auto& piv() { return m_piv; }
 
-  std::optional<place_t> place(dim_t bounds) override;
-  void render(aplace_t place) const override = 0;
+  void resize(apos_t apos, dim_t dim) override;
+
+protected:
+  const auto& apos() const { return m_apos; }
+  auto& apos() { return m_apos; }
+
+  const auto& adim() const { return m_adim; }
+  auto& adim() { return m_adim; }
 
 private:
   pos_t m_pos;
   dim_t m_dim;
   piv_t m_piv;
+
+  apos_t m_apos;
+  dim_t m_adim;
 };
 
 }  // namespace display

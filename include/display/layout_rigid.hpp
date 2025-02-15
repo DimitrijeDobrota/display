@@ -20,6 +20,7 @@ public:
 
   void resize(apos_t apos, dim_t dim) override;
   void render() const override;
+  void input(event& evnt) override;
 
 private:
   auto calc_width(dim_t share) const;

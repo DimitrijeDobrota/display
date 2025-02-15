@@ -107,8 +107,18 @@ void LayoutRigid::resize(apos_t apos, dim_t dim)
 
 void LayoutRigid::render() const
 {
-  for (const auto& [screen, _, __] : m_recs) {
+  for (const auto& [screen, _, _1] : m_recs) {
     screen.render();
+  }
+}
+
+void LayoutRigid::input(event& evnt)
+{
+  for (auto& [screen, _, _1] : m_recs) {
+    screen.input(evnt);
+    if (evnt.type() == event::Type::NONE) {
+      break;
+    }
   }
 }
 

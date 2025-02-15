@@ -47,6 +47,7 @@ public:
 
   void resize(apos_t apos, dim_t dim);
   void render() const;
+  void input(event& evnt);
 
 private:
   apos_t m_apos;

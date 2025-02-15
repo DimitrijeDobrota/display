@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "alec/alec.hpp"
+#include <alec/alec.hpp>
+
 #include "display/display.hpp"
 #include "display/layout_free.hpp"
 #include "display/layout_rigid.hpp"
@@ -18,18 +19,21 @@ public:
   {
   }
 
-  void render(display::aplace_t aplc) const override
+  void render() const override
   {
     static int color_red = 0;
     color_red = (color_red + 25) % 256;
 
-    const auto [start, end] = aplc;
+    const auto [x, y] = apos();
+    const auto [w, h] = apos();
 
     std::cout << alec::background(color_red, 65, 65);
-    for (auto ypos = start.y; ypos < end.y; ypos++) {
-      std::cout << alec::cursor_position(ypos + 1, start.x + 1);
-      std::cout << std::string(end.x - start.x, ' ');
+
+    for (auto ypos = y; ypos < y + h; ypos++) {
+      std::cout << alec::cursor_position(ypos + 1, x + 1);
+      std::cout << std::string(w, ' ');
     }
+
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << std::flush;
   }
