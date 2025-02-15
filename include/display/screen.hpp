@@ -11,8 +11,9 @@ namespace display
 class Screen
 {
 public:
-  explicit Screen(apos_t apos)
+  explicit Screen(apos_t apos, dim_t dim)
       : m_apos(apos)
+      , m_dim(dim)
   {
   }
 
@@ -27,7 +28,7 @@ public:
   template<typename T, class... Args>
   T& set_layout(Args&&... args)
   {
-    m_layout = std::make_unique<T>(std::forward<Args>(args)...);
+    m_layout = std::make_unique<T>(m_apos, m_dim, std::forward<Args>(args)...);
     return get_layout<T>();
   }
 

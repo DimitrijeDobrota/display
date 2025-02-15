@@ -8,8 +8,9 @@ namespace display
 class Layout
 {
 public:
-  explicit Layout(apos_t apos)
+  explicit Layout(apos_t apos, dim_t dim)
       : m_apos(apos)
+      , m_dim(dim)
   {
   }
 

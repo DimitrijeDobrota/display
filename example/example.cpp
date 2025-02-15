@@ -14,9 +14,14 @@ namespace
 class WindowCustom : public display::WindowPivot
 {
 public:
-  WindowCustom(display::dim_t dim, display::piv_t piv)
-      : WindowPivot(display::pos_t(), dim, piv)
+  WindowCustom(display::apos_t apos,
+               display::dim_t adim,
+               display::pos_t pos,
+               display::dim_t dim,
+               display::piv_t piv)
+      : WindowPivot(apos, adim, pos, dim, piv)
   {
+      render();
   }
 
   void render() const override
@@ -24,8 +29,9 @@ public:
     static int color_red = 0;
     color_red = (color_red + 25) % 256;
 
-    const auto [x, y] = apos();
-    const auto [w, h] = apos();
+    const auto [apos, adim] = place();
+    const auto [x, y] = apos;
+    const auto [w, h] = adim;
 
     std::cout << alec::background(color_red, 65, 65);
 
@@ -42,20 +48,27 @@ public:
 class LayoutCustom : public display::LayoutFree
 {
 public:
-  LayoutCustom()
+  LayoutCustom(display::apos_t apos, display::dim_t dim)
+      : LayoutFree(apos, dim)
   {
-    using display::dim_t, display::piv_t;
+    using display::pos_t, display::dim_t, display::piv_t;
     using display::PvtX, display::PvtY;
 
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Top));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Top));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Top));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Center));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Bottom));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Bottom));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Center));
-    append<WindowCustom>(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
+    const auto [width, height] = dim;
+    const display::sz_t midw = width / 2;
+    const display::sz_t midh = height / 2;
+
+    // clang-format off
+    append<WindowCustom>(pos_t(   0,       0), dim_t(12, 4), piv_t(  PvtX::Left,    PvtY::Top));
+    append<WindowCustom>(pos_t(midw,       0), dim_t(12, 4), piv_t(PvtX::Center,    PvtY::Top));
+    append<WindowCustom>(pos_t(width,      0), dim_t(12, 4), piv_t( PvtX::Right,    PvtY::Top));
+    append<WindowCustom>(pos_t(width,   midh), dim_t(12, 4), piv_t( PvtX::Right, PvtY::Center));
+    append<WindowCustom>(pos_t(width, height), dim_t(12, 4), piv_t (PvtX::Right, PvtY::Bottom));
+    append<WindowCustom>(pos_t(midw,  height), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
+    append<WindowCustom>(pos_t(   0,  height), dim_t(12, 4), piv_t(  PvtX::Left, PvtY::Bottom));
+    append<WindowCustom>(pos_t(   0,    midh), dim_t(12, 4), piv_t(  PvtX::Left, PvtY::Center));
+    append<WindowCustom>(pos_t(midw,    midh), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
+    // clang-format on
   }
 
   void resize(display::apos_t apos, display::dim_t dim) override
@@ -102,7 +115,7 @@ int main()
     layout[3].set_layout<LayoutCustom>();
     layout[4].set_layout<LayoutCustom>();
 
-    for (display.set_resized(); true;) {
+    while (true) {
       const auto evnt = display.get_event();
       if (evnt.type() == event::Type::RESIZE) {
         std::cout << alec::erase_display_v<alec::Motion::WHOLE>;

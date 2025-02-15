@@ -31,6 +31,8 @@ private:
   Display();
   ~Display();
 
+  void resize();
+
   static void handle_sigwinch(int /* unused */);
   static bool is_resize_track;
 

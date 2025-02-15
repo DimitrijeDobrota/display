@@ -12,8 +12,8 @@ namespace display
 class LayoutFree : public Layout
 {
 public:
-  LayoutFree()
-      : Layout({0, 0})
+  LayoutFree(apos_t apos, dim_t dim)
+      : Layout(apos, dim)
   {
   }
 
@@ -23,7 +23,8 @@ public:
   template<typename T, class... Args>
   T& append(Args&&... args)
   {
-    m_wins.emplace_back(std::make_unique<T>(std::forward<Args>(args)...));
+    m_wins.emplace_back(
+        std::make_unique<T>(apos(), dim(), std::forward<Args>(args)...));
     return get<T>(m_wins.size() - 1);
   }
 

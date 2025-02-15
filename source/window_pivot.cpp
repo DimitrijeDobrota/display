@@ -5,16 +5,16 @@
 namespace display
 {
 
-void WindowPivot::resize(apos_t apos, dim_t dim)
+std::tuple<apos_t, dim_t> WindowPivot::place() const
 {
-  const auto [cols, rows] = dim;
+  const auto [cols, rows] = adim();
   const auto [posx, posy] = pos();
 
   if (posx > cols || posy > rows) {
-    return;
+    return {{0, 0}, {0, 0}};
   }
 
-  const auto [wdth, hght] = this->dim();
+  const auto [wdth, hght] = dim();
   const display::sz_t zero = 0;
   const sz_t wdthm = wdth / 2;
   const sz_t hghtm = hght / 2;
@@ -29,7 +29,7 @@ void WindowPivot::resize(apos_t apos, dim_t dim)
       break;
     case PvtX::Center:
       start.x = sub_lim(posx, wdthm, zero);
-      end.x = add_lim(posx, wdthm, cols);
+      end.x = add_lim(start.x, wdth, cols);
       break;
     case PvtX::Right:
       end.x = posx;
@@ -44,7 +44,7 @@ void WindowPivot::resize(apos_t apos, dim_t dim)
       break;
     case PvtY::Center:
       start.y = sub_lim(posy, hghtm, zero);
-      end.y = add_lim(posy, hghtm, rows);
+      end.y = add_lim(start.y, hght, rows);
       break;
     case PvtY::Bottom:
       end.y = posy;
@@ -52,8 +52,7 @@ void WindowPivot::resize(apos_t apos, dim_t dim)
       break;
   }
 
-  m_apos = apos + start;
-  m_adim = end - start;
+  return {apos() + start, end - start};
 }
 
 }  // namespace display

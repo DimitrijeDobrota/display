@@ -13,7 +13,7 @@ class LayoutRigid : public Layout
 public:
   using layout_t = std::vector<std::vector<std::uint8_t>>;
 
-  LayoutRigid(layout_t layout);  // NOLINT
+  LayoutRigid(apos_t apos, dim_t dim, layout_t layout);  // NOLINT
 
   const auto& operator[](std::size_t idx) const { return m_recs[idx].screen; }
   auto& operator[](std::size_t idx) { return m_recs[idx].screen; }
@@ -33,7 +33,7 @@ private:
   struct record_t
   {
     record_t()
-        : screen(apos_t(0, 0))
+        : screen(apos_t(0, 0), dim_t(0, 0))
     {
     }
 

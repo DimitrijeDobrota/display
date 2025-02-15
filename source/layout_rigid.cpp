@@ -6,8 +6,8 @@
 namespace display
 {
 
-LayoutRigid::LayoutRigid(layout_t layout)
-    : Layout(apos_t(0, 0))
+LayoutRigid::LayoutRigid(apos_t apos, dim_t dim, layout_t layout)
+    : Layout(apos, dim)
     , m_grid(static_cast<sz_t>(layout[0].size()),
              static_cast<sz_t>(layout.size()))
     , m_recs(count_and_pad(layout))
@@ -58,6 +58,8 @@ LayoutRigid::LayoutRigid(layout_t layout)
       total += cnt, cnt = 0;
     }
   }
+
+  LayoutRigid::resize(apos, dim);
 }
 
 std::size_t LayoutRigid::count_and_pad(layout_t& layout) const
