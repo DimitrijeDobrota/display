@@ -18,12 +18,10 @@ bool is_finished = false;  // NOLINT
 class WindowCustom : public display::WindowPivot
 {
 public:
-  WindowCustom(display::apos_t apos,
-               display::dim_t adim,
-               display::pos_t pos,
+  WindowCustom(display::aplace_t aplc,
                display::piv_t piv,
                const example::menu_t& menu)
-      : WindowPivot(apos, adim, pos, calc_dim(menu), piv)
+      : WindowPivot(aplc, calc_dim(menu), piv)
       , m_menu(menu)
   {
   }
@@ -75,13 +73,14 @@ public:
     for (std::size_t i = 0; i < m_menu.items.size(); i++) {
       if (m_selected == i) {
         std::cout << alec::foreground_v<alec::Color::GREEN>;
-      } else {
-        std::cout << alec::foreground_v<alec::Color::DEFAULT>;
       }
 
       right(m_menu.items[i].prompt);
+
+      if (m_selected == i) {
+        std::cout << alec::foreground_v<alec::Color::DEFAULT>;
+      }
     }
-    std::cout << alec::foreground_v<alec::Color::DEFAULT>;
     empty();
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;
@@ -190,7 +189,7 @@ int menu_t::visit(const menu_t& menu)
 {
   using display::Display, display::LayoutPivot;
 
-  auto& layout = Display::display().screen().get_layout<LayoutPivot>();
+  auto& layout = Display::display().layout().get_child<LayoutPivot>();
 
   static std::stack<const menu_t*> stk;
 
@@ -200,13 +199,13 @@ int menu_t::visit(const menu_t& menu)
       finish(0);
       return 0;
     }
-    layout.set_window<WindowCustom>(*stk.top());
+    layout.set_child<WindowCustom>(*stk.top());
     layout.render();
     return 0;
   }
 
   stk.push(&menu);
-  layout.set_window<WindowCustom>(menu);
+  layout.set_child<WindowCustom>(menu);
 
   layout.render();
   return 0;
@@ -220,7 +219,7 @@ int main()
     using namespace display;  // NOLINT
 
     auto& display = Display::display();
-    display.screen().set_layout<LayoutPivot>(piv_t(PvtX::Center, PvtY::Center));
+    display.layout().set_child<LayoutPivot>(piv_t(PvtX::Center, PvtY::Center));
 
     example::menu_main(0);
 
@@ -236,7 +235,7 @@ int main()
         if (evnt.key() == 'q') {
           break;
         }
-        display.screen().input(evnt);
+        display.input(evnt);
       }
     }
   } catch (std::exception& err) {

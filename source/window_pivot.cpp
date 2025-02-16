@@ -4,11 +4,10 @@
 
 namespace display
 {
-
 std::tuple<apos_t, dim_t> WindowPivot::place() const
 {
   const auto [cols, rows] = adim();
-  const auto [posx, posy] = pos();
+  const auto [posx, posy] = m_pos;
 
   if (posx > cols || posy > rows) {
     return {{0, 0}, {0, 0}};

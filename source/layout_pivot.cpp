@@ -1,35 +1,23 @@
 #include "display/layout_pivot.hpp"
 
+#include "display/window_pivot.hpp"
+
 namespace display
 {
 
-void LayoutPivot::resize(apos_t apos, dim_t dim)
+void LayoutPivot::resize(aplace_t aplc)
 {
-  Layout::resize(apos, dim);
+  Layout::resize(aplc);
 
-  if (has_window()) {
-    m_window->pos() = get_pos();
-    m_window->resize(apos, dim);
-  }
-}
-
-void LayoutPivot::render() const
-{
-  if (has_window()) {
-    m_window->render();
-  }
-}
-
-void LayoutPivot::input(event& evnt)
-{
-  if (has_window()) {
-    m_window->input(evnt);
+  if (has_child()) {
+    get_child().set_pos(get_pos());
+    get_child().resize(aplc);
   }
 }
 
 pos_t LayoutPivot::get_pos() const
 {
-  const auto [width, height] = dim();
+  const auto [width, height] = adim();
   const display::sz_t midw = width / 2;
   const display::sz_t midh = height / 2;
 

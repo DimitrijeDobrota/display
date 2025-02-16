@@ -4,7 +4,6 @@
 #include <alec/alec.hpp>
 
 #include "display/display.hpp"
-#include "display/layout_free.hpp"
 #include "display/layout_rigid.hpp"
 #include "display/window_pivot.hpp"
 
@@ -14,14 +13,9 @@ namespace
 class WindowCustom : public display::WindowPivot
 {
 public:
-  WindowCustom(display::apos_t apos,
-               display::dim_t adim,
-               display::pos_t pos,
-               display::dim_t dim,
-               display::piv_t piv)
-      : WindowPivot(apos, adim, pos, dim, piv)
+  WindowCustom(display::aplace_t aplc, display::dim_t dim, display::piv_t piv)
+      : WindowPivot(aplc, dim, piv)
   {
-      render();
   }
 
   void render() const override
@@ -45,49 +39,50 @@ public:
   }
 };
 
-class LayoutCustom : public display::LayoutFree
+class LayoutCustom : public display::LayoutMulti<WindowCustom>
 {
 public:
-  LayoutCustom(display::apos_t apos, display::dim_t dim)
-      : LayoutFree(apos, dim)
+  explicit LayoutCustom(display::aplace_t aplc)
+      : LayoutMulti(aplc)
   {
-    using display::pos_t, display::dim_t, display::piv_t;
+    using display::dim_t, display::piv_t;
     using display::PvtX, display::PvtY;
 
-    const auto [width, height] = dim;
-    const display::sz_t midw = width / 2;
-    const display::sz_t midh = height / 2;
+    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Top));
+    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Top));
+    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Top));
+    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Center));
+    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Bottom));
+    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
+    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Bottom));
+    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Center));
+    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
 
-    // clang-format off
-    append<WindowCustom>(pos_t(   0,       0), dim_t(12, 4), piv_t(  PvtX::Left,    PvtY::Top));
-    append<WindowCustom>(pos_t(midw,       0), dim_t(12, 4), piv_t(PvtX::Center,    PvtY::Top));
-    append<WindowCustom>(pos_t(width,      0), dim_t(12, 4), piv_t( PvtX::Right,    PvtY::Top));
-    append<WindowCustom>(pos_t(width,   midh), dim_t(12, 4), piv_t( PvtX::Right, PvtY::Center));
-    append<WindowCustom>(pos_t(width, height), dim_t(12, 4), piv_t (PvtX::Right, PvtY::Bottom));
-    append<WindowCustom>(pos_t(midw,  height), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
-    append<WindowCustom>(pos_t(   0,  height), dim_t(12, 4), piv_t(  PvtX::Left, PvtY::Bottom));
-    append<WindowCustom>(pos_t(   0,    midh), dim_t(12, 4), piv_t(  PvtX::Left, PvtY::Center));
-    append<WindowCustom>(pos_t(midw,    midh), dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
-    // clang-format on
+    recalc();
   }
 
-  void resize(display::apos_t apos, display::dim_t dim) override
+  void resize(display::aplace_t aplc) override
   {
-    LayoutFree::resize(apos, dim);
+    LayoutMulti::resize(aplc);
+    recalc();
+  }
 
-    const auto [width, height] = dim;
+private:
+  void recalc()
+  {
+    const auto [width, height] = adim();
     const display::sz_t midw = width / 2;
     const display::sz_t midh = height / 2;
 
-    get<WindowCustom>(0).pos() = {0, 0};
-    get<WindowCustom>(1).pos() = {midw, 0};
-    get<WindowCustom>(2).pos() = {width, 0};
-    get<WindowCustom>(3).pos() = {width, midh};
-    get<WindowCustom>(4).pos() = {width, height};
-    get<WindowCustom>(5).pos() = {midw, height};
-    get<WindowCustom>(6).pos() = {0, height};
-    get<WindowCustom>(7).pos() = {0, midh};
-    get<WindowCustom>(8).pos() = {midw, midh};
+    get(0).set_pos({0, 0});
+    get(1).set_pos({midw, 0});
+    get(2).set_pos({width, 0});
+    get(3).set_pos({width, midh});
+    get(4).set_pos({width, height});
+    get(5).set_pos({midw, height});
+    get(6).set_pos({0, height});
+    get(7).set_pos({0, midh});
+    get(8).set_pos({midw, midh});
   }
 };
 
@@ -101,20 +96,21 @@ int main()
     auto& display = Display::display();
 
     // clang-format off
-    const LayoutRigid::layout_t split = {
+    const LayoutRigid<>::layout_t split = {
         {1, 1, 2},
         {0, 3, 2},
         {4, 3, 2},
     };
     // clang-format on
 
-    auto& layout = display.screen().set_layout<LayoutRigid>(split);
-    layout[0].set_layout<LayoutCustom>();
-    layout[1].set_layout<LayoutCustom>();
-    layout[2].set_layout<LayoutCustom>();
-    layout[3].set_layout<LayoutCustom>();
-    layout[4].set_layout<LayoutCustom>();
+    auto& layout = display.layout().set_child<LayoutRigid<>>(split);
+    layout.append<LayoutCustom>();
+    layout.append<LayoutCustom>();
+    layout.append<LayoutCustom>();
+    layout.append<LayoutCustom>();
+    layout.append<LayoutCustom>();
 
+    display.render();
     while (true) {
       const auto evnt = display.get_event();
       if (evnt.type() == event::Type::RESIZE) {

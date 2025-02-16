@@ -1,41 +1,141 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
+#include "display/element.hpp"
 #include "display/types.hpp"
 
 namespace display
 {
 
-class Layout
+template<typename T = Element>
+  requires(std::is_base_of_v<Element, T>)
+class Layout : public Element
 {
 public:
-  explicit Layout(apos_t apos, dim_t dim)
-      : m_apos(apos)
-      , m_dim(dim)
+  using ptr_t = std::unique_ptr<T>;
+
+  explicit Layout(aplace_t aplc)
+      : Element(aplc)
   {
   }
 
-  Layout(const Layout&) = delete;
-  Layout& operator=(const Layout&) = delete;
+  void resize(aplace_t aplc) override
+  {
+    Element::resize(aplc);
 
-  Layout(Layout&&) = default;
-  Layout& operator=(Layout&&) = default;
+    if (has_child()) {
+      m_child->resize(aplc);
+    }
+  }
 
-  virtual ~Layout() = default;
+  void render() const override
+  {
+    if (has_child()) {
+      m_child->render();
+    }
+  }
 
-  virtual void resize(apos_t apos, dim_t dim) { m_apos = apos, m_dim = dim; }
-  virtual void render() const = 0;
-  virtual void input(event& evnt) = 0;
+  void input(event& evnt) override
+  {
+    if (has_child()) {
+      m_child->input(evnt);
+    }
+  }
 
-protected:
-  const dim_t& dim() const { return m_dim; }
-  dim_t& dim() { return m_dim; }
+  template<typename M = T, class... Args>
+    requires(std::is_base_of_v<T, M>)
+  M& set_child(Args&&... args)
+  {
+    m_child = std::make_unique<M>(aplc(), std::forward<Args>(args)...);
+    return get_child<M>();
+  }
 
-  const apos_t& apos() const { return m_apos; }
-  apos_t& apos() { return m_apos; }
+  template<typename M = T>
+    requires(std::is_base_of_v<T, M>)
+  const M& get_child() const
+  {
+    return *dynamic_cast<M*>(m_child.get());
+  }
+
+  template<typename M = T>
+    requires(std::is_base_of_v<T, M>)
+  M& get_child()
+  {
+    return *dynamic_cast<M*>(m_child.get());
+  }
+
+  bool has_child() const { return m_child != nullptr; }
 
 private:
-  apos_t m_apos;
-  dim_t m_dim;
+  ptr_t m_child;
+};
+
+template<typename T = Element>
+  requires(std::is_base_of_v<Element, T>)
+class LayoutMulti : public Element
+{
+public:
+  using ptr_t = std::unique_ptr<T>;
+
+  explicit LayoutMulti(aplace_t aplc)
+      : Element(aplc)
+  {
+  }
+
+  void resize(aplace_t aplc) override
+  {
+    Element::resize(aplc);
+
+    for (std::size_t i = 0; i < size(); i++) {
+      m_children[i]->resize(place(i));
+    }
+  }
+
+  void render() const override
+  {
+    for (const auto& child : m_children) {
+      child->render();
+    }
+  }
+
+  void input(event& evnt) override
+  {
+    for (auto& child : m_children) {
+      child->input(evnt);
+    }
+  }
+
+  template<typename M = T, class... Args>
+    requires(std::is_base_of_v<T, M>)
+  M& append(Args&&... args)
+  {
+    m_children.emplace_back(std::make_unique<M>(place(m_children.size()),
+                                                std::forward<Args>(args)...));
+    return get<M>(m_children.size() - 1);
+  }
+
+  template<typename M = T>
+    requires(std::is_base_of_v<T, M>)
+  const M& get(std::size_t idx) const
+  {
+    return *dynamic_cast<M*>(m_children[idx].get());
+  }
+
+  template<typename M = T>
+    requires(std::is_base_of_v<T, M>)
+  M& get(std::size_t idx)
+  {
+    return *dynamic_cast<M*>(m_children[idx].get());
+  }
+
+  std::size_t size() { return m_children.size(); }
+
+private:
+  virtual aplace_t place(std::size_t /* unused */) const { return aplc(); }
+
+  std::vector<ptr_t> m_children;
 };
 
 }  // namespace display

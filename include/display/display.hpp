@@ -2,7 +2,7 @@
 
 #include <alec/alec.hpp>
 
-#include "display/screen.hpp"
+#include "display/layout.hpp"
 
 namespace display
 {
@@ -17,7 +17,8 @@ public:
   Display& operator=(const Display&) = delete;
   Display& operator=(Display&&) = delete;
 
-  Screen& screen() { return m_screen; }
+  const auto& layout() const { return m_layout; }
+  auto& layout() { return m_layout; }
 
   event get_event();
 
@@ -25,7 +26,8 @@ public:
   void set_resized();
   void reset_resized();
 
-  void render();
+  void render() const;
+  void input(event& evnt);
 
 private:
   Display();
@@ -36,7 +38,7 @@ private:
   static void handle_sigwinch(int /* unused */);
   static bool is_resize_track;
 
-  Screen m_screen;
+  Layout<Element> m_layout;
   bool m_is_resized = false;
 };
 

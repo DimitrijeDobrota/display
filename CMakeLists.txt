@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.23
+    VERSION 0.1.24
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
@@ -20,11 +20,8 @@ find_package(alec 0.1.13 CONFIG REQUIRED)
 add_library(
     display_display
     source/display.cpp
-    source/screen.cpp
     # ---- utility
-    source/layout_free.cpp
     source/layout_pivot.cpp
-    source/layout_rigid.cpp
     source/window_pivot.cpp
 )
 target_link_libraries(display_display PUBLIC alec::alec)

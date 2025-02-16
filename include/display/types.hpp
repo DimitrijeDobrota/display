@@ -80,6 +80,30 @@ struct apos_t
   sz_t y;
 };
 
+struct place_t
+{
+  place_t(pos_t posval, dim_t dimval)
+      : pos(posval)
+      , dim(dimval)
+  {
+  }
+
+  pos_t pos;
+  dim_t dim;
+};
+
+struct aplace_t
+{
+  aplace_t(apos_t aposval, dim_t adimval)
+      : apos(aposval)
+      , adim(adimval)
+  {
+  }
+
+  apos_t apos;
+  dim_t adim;
+};
+
 enum class PvtX : std::uint8_t
 {
   Left,
