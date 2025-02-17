@@ -1,7 +1,7 @@
 #pragma once
 
-#include "display/window.hpp"
 #include "display/utility.hpp"
+#include "display/window.hpp"
 
 namespace display
 {
@@ -10,20 +10,25 @@ class WindowPivot : public Window
 {
 public:
   WindowPivot(aplace_t aplc, piv_t piv, dim_t dim)
-      : Window(aplc)
+      : Window(place(aplc, piv, dim))
       , m_piv(piv)
       , m_dim(dim)
   {
   }
 
-protected:
-  aplace_t place() const
+  void resize(aplace_t aplc) override
   {
-    const auto [cols, rows] = adim();
+    Window::resize(place(aplc, m_piv, m_dim));
+  }
+
+protected:
+  static aplace_t place(aplace_t aplc, piv_t piv, dim_t dim)
+  {
+    const auto [cols, rows] = aplc.adim;
     const sz_t colsh = cols / 2;
     const sz_t rowsh = rows / 2;
 
-    const auto [wdth, hght] = m_dim;
+    const auto [wdth, hght] = dim;
     const sz_t wdthm = wdth / 2;
     const sz_t hghtm = hght / 2;
 
@@ -34,7 +39,7 @@ protected:
 
     using display::add_lim, display::sub_lim;
 
-    switch (m_piv.x) {
+    switch (piv.x) {
       case PvtX::Left:
         start.x = 0;
         end.x = add_lim(start.x, wdth, cols);
@@ -49,7 +54,7 @@ protected:
         break;
     }
 
-    switch (m_piv.y) {
+    switch (piv.y) {
       case PvtY::Top:
         start.y = 0;
         end.y = add_lim(start.y, hght, rows);
@@ -64,7 +69,7 @@ protected:
         break;
     }
 
-    return {apos() + start, end - start};
+    return {aplc.apos + start, end - start};
   }
 
 private:

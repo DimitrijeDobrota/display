@@ -3,9 +3,7 @@
 #include "display/types.hpp"
 
 namespace display
-{
-
-class Element
+{ class Element
 {
 public:
   explicit Element(aplace_t aplc)

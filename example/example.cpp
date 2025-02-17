@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 #include <alec/alec.hpp>
 
@@ -24,17 +23,13 @@ public:
   void render() const override
   {
     static int color_red = 0;
+
     color_red = (color_red + 25) % 256;
-
-    const auto [pos, dim] = place();
-    const auto [x, y] = pos;
-    const auto [w, h] = dim;
-
     std::cout << alec::background(color_red, 65, 65);
 
-    for (auto ypos = y; ypos < y + h; ypos++) {
-      std::cout << alec::cursor_position(ypos + 1, x + 1);
-      std::cout << std::string(w, ' ');
+    line_empty(/* reset = */ true);
+    for (std::size_t i = 1; i < ahgt(); i++) {
+      line_empty();
     }
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;

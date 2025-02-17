@@ -4,9 +4,9 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.25
+    VERSION 0.1.26
     DESCRIPTION "TUI library"
-    HOMEPAGE_URL "https://example.com/"
+    HOMEPAGE_URL "git://git.dimitrijedobrota.com/display.git"
     LANGUAGES CXX
 )
 
@@ -20,6 +20,7 @@ find_package(alec 0.1.13 CONFIG REQUIRED)
 add_library(
     display_display
     source/display.cpp
+    source/window.cpp
 )
 target_link_libraries(display_display PUBLIC alec::alec)
 add_library(display::display ALIAS display_display)

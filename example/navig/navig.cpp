@@ -1,4 +1,3 @@
-#include <format>
 #include <iostream>
 #include <stack>
 #include <string>
@@ -37,51 +36,32 @@ public:
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << alec::foreground_v<alec::Color::DEFAULT>;
 
-    const auto [apos, adim] = place();
-    const auto [x, y] = apos;
-    const auto [w, h] = adim;
-
-    display::sz_t ypos = y;
-
-    const auto cursor = [&]() { return alec::cursor_position(++ypos, x + 1); };
-
-    for (std::size_t i = 0; i < h; i++) {
-      std::cout << cursor() << std::string(w, ' ');
+    line_empty(/* reset = */ true);
+    for (std::size_t i = 1; i < ahgt(); i++) {
+      line_empty();
     }
+    std::cout << std::flush;
   }
 
   void render() const override
   {
-    const auto [apos, adim] = place();
-    const auto [x, y] = apos;
-    const auto [w, h] = adim;
-
-    display::sz_t ypos = y;
-
-    auto cursor = [&]() { return alec::cursor_position(++ypos, x + 1); };
-    auto empty = [&]() { std::cout << cursor() << std::string(w, ' '); };
-
-    auto center = [&](const std::string& value)
-    { std::cout << cursor() << std::format("{:^{}}", value, w); };
-
-    auto right = [&](const std::string& value)
-    { std::cout << cursor() << std::format("{:>{}} ", value, w - 1); };
-
     std::cout << alec::background_v<alec::Color::BLUE>;
 
-    empty(), center(m_menu.title), empty();
+    line_empty(/* reset = */ true);
+    line_center(m_menu.title);
+    line_empty();
     for (std::size_t i = 0; i < m_menu.items.size(); i++) {
       if (m_selected == i) {
         std::cout << alec::foreground_v<alec::Color::GREEN>;
       }
 
-      right(m_menu.items[i].prompt);
+      line_right(m_menu.items[i].prompt);
 
       if (m_selected == i) {
         std::cout << alec::foreground_v<alec::Color::DEFAULT>;
       }
     }
-    empty();
+    line_empty();
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << std::flush;
