@@ -6,7 +6,7 @@
 #include <stamen/stamen.hpp>
 
 #include "display/display.hpp"
-#include "display/layout_pivot.hpp"
+#include "display/layout.hpp"
 #include "display/window_pivot.hpp"
 #include "menu.hpp"
 
@@ -21,7 +21,7 @@ public:
   WindowCustom(display::aplace_t aplc,
                display::piv_t piv,
                const example::menu_t& menu)
-      : WindowPivot(aplc, calc_dim(menu), piv)
+      : WindowPivot(aplc, piv, calc_dim(menu))
       , m_menu(menu)
   {
   }
@@ -187,9 +187,10 @@ int finish(std::size_t /* unused */)  // NOLINT
 
 int menu_t::visit(const menu_t& menu)
 {
-  using display::Display, display::LayoutPivot;
+  using display::Display, display::Layout;
+  using display::PvtX, display::PvtY, display::piv_t;
 
-  auto& layout = Display::display().layout().get_child<LayoutPivot>();
+  auto& layout = Display::display().layout();
 
   static std::stack<const menu_t*> stk;
 
@@ -199,15 +200,13 @@ int menu_t::visit(const menu_t& menu)
       finish(0);
       return 0;
     }
-    layout.set_child<WindowCustom>(*stk.top());
-    layout.render();
-    return 0;
+  } else {
+    stk.push(&menu);
   }
 
-  stk.push(&menu);
-  layout.set_child<WindowCustom>(menu);
-
+  layout.set_child<WindowCustom>(piv_t(PvtX::Center, PvtY::Center), *stk.top());
   layout.render();
+
   return 0;
 }
 
@@ -219,8 +218,6 @@ int main()
     using namespace display;  // NOLINT
 
     auto& display = Display::display();
-    display.layout().set_child<LayoutPivot>(piv_t(PvtX::Center, PvtY::Center));
-
     example::menu_main(0);
 
     while (!is_finished) {

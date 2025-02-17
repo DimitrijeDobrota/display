@@ -10,11 +10,14 @@
 namespace
 {
 
+using display::PvtX, display::PvtY;
+using display::sz_t, display::dim_t, display::piv_t, display::aplace_t;
+
 class WindowCustom : public display::WindowPivot
 {
 public:
-  WindowCustom(display::aplace_t aplc, display::dim_t dim, display::piv_t piv)
-      : WindowPivot(aplc, dim, piv)
+  explicit WindowCustom(aplace_t aplc, piv_t piv, dim_t dim)
+      : WindowPivot(aplc, piv, dim)
   {
   }
 
@@ -23,9 +26,9 @@ public:
     static int color_red = 0;
     color_red = (color_red + 25) % 256;
 
-    const auto [apos, adim] = place();
-    const auto [x, y] = apos;
-    const auto [w, h] = adim;
+    const auto [pos, dim] = place();
+    const auto [x, y] = pos;
+    const auto [w, h] = dim;
 
     std::cout << alec::background(color_red, 65, 65);
 
@@ -39,50 +42,21 @@ public:
   }
 };
 
-class LayoutCustom : public display::LayoutMulti<WindowCustom>
+class LayoutCustom : public display::LayoutRigid<display::Layout<WindowCustom>>
 {
 public:
   explicit LayoutCustom(display::aplace_t aplc)
-      : LayoutMulti(aplc)
+      : LayoutRigid(aplc, {{0, 1, 2}, {7, 8, 3}, {6, 5, 4}})
   {
-    using display::dim_t, display::piv_t;
-    using display::PvtX, display::PvtY;
-
-    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Top));
-    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Top));
-    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Top));
-    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Center));
-    append(dim_t(12, 4), piv_t(PvtX::Right, PvtY::Bottom));
-    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Bottom));
-    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Bottom));
-    append(dim_t(12, 4), piv_t(PvtX::Left, PvtY::Center));
-    append(dim_t(12, 4), piv_t(PvtX::Center, PvtY::Center));
-
-    recalc();
-  }
-
-  void resize(display::aplace_t aplc) override
-  {
-    LayoutMulti::resize(aplc);
-    recalc();
-  }
-
-private:
-  void recalc()
-  {
-    const auto [width, height] = adim();
-    const display::sz_t midw = width / 2;
-    const display::sz_t midh = height / 2;
-
-    get(0).set_pos({0, 0});
-    get(1).set_pos({midw, 0});
-    get(2).set_pos({width, 0});
-    get(3).set_pos({width, midh});
-    get(4).set_pos({width, height});
-    get(5).set_pos({midw, height});
-    get(6).set_pos({0, height});
-    get(7).set_pos({0, midh});
-    get(8).set_pos({midw, midh});
+    append().set_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Center, PvtY::Top), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Right, PvtY::Top), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Right, PvtY::Center), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Right, PvtY::Bottom), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Center, PvtY::Bottom), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Left, PvtY::Bottom), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
+    append().set_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
   }
 };
 
