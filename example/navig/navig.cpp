@@ -25,24 +25,6 @@ public:
   {
   }
 
-  WindowCustom(const WindowCustom&) = delete;
-  WindowCustom& operator=(const WindowCustom&) = delete;
-
-  WindowCustom(WindowCustom&&) = default;
-  WindowCustom& operator=(WindowCustom&&) = default;
-
-  ~WindowCustom() override
-  {
-    std::cout << alec::background_v<alec::Color::DEFAULT>;
-    std::cout << alec::foreground_v<alec::Color::DEFAULT>;
-
-    line_empty(/* reset = */ true);
-    for (std::size_t i = 1; i < ahgt(); i++) {
-      line_empty();
-    }
-    std::cout << std::flush;
-  }
-
   void render() const override
   {
     std::cout << alec::background_v<alec::Color::BLUE>;

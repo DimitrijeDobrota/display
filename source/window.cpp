@@ -6,6 +6,18 @@
 namespace display
 {
 
+void Window::clear() const
+{
+  std::cout << alec::background_v<alec::Color::DEFAULT>;
+  std::cout << alec::foreground_v<alec::Color::DEFAULT>;
+
+  line_empty(/* reset = */ true);
+  for (std::size_t i = 1; i < ahgt(); i++) {
+    line_empty();
+  }
+  std::cout << std::flush;
+}
+
 std::ostream& Window::next_line(bool reset) const
 {
   if (reset) {

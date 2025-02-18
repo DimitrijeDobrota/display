@@ -14,6 +14,7 @@ public:
   {
   }
 
+  void clear() const override;
   void input(event& /* unused */) override {}
 
 protected:
