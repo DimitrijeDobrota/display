@@ -17,14 +17,13 @@ public:
   {
   }
 
-  void render() const override {}
   void clear() const override;
   void input(event& /* unused */) override {}
 
 protected:
   static dim_t padding() { return {0, 0}; }
 
-  std::ostream& set_cursor(sz_t posy, sz_t posx) const;
+  static std::ostream& set_cursor(sz_t posy, sz_t posx);
   std::ostream& line_next() const;
 
   void line_reset() const;
@@ -42,63 +41,9 @@ protected:
   sz_t hgt() const { return ahgt() - m_padding.height; }
 
 private:
-  friend class WindowBorder;
-  friend class WindowBox;
-  friend class WindowBorderBox;
-
-  using Element::adim;
-  using Element::ahgt;
-  using Element::aplc;
-  using Element::apos;
-  using Element::awth;
-  using Element::axpos;
-  using Element::aypos;
-
   dim_t m_padding;
 
   mutable display::sz_t m_ypos = 0;
-};
-
-class WindowBorder : public Window
-{
-public:
-  explicit WindowBorder(place_t aplc)
-      : Window(aplc, padding())
-  {
-  }
-
-  void render() const override;
-
-protected:
-  static dim_t padding() { return {2, 2}; }
-};
-
-class WindowBox : public Window
-{
-public:
-  explicit WindowBox(place_t aplc)
-      : Window(aplc, padding())
-  {
-  }
-
-  void render() const override;
-
-protected:
-  static dim_t padding() { return {2, 2}; }
-};
-
-class WindowBorderBox : public Window
-{
-public:
-  explicit WindowBorderBox(place_t aplc)
-      : Window(aplc, padding())
-  {
-  }
-
-  void render() const override;
-
-protected:
-  static dim_t padding() { return {4, 2}; }
 };
 
 }  // namespace display

@@ -19,14 +19,12 @@ void Window::clear() const
   std::cout << std::flush;
 }
 
-// Window
-
 void Window::line_reset() const
 {
   m_ypos = ypos();
 }
 
-std::ostream& Window::set_cursor(sz_t posy, sz_t posx) const
+std::ostream& Window::set_cursor(sz_t posy, sz_t posx)
 {
   return std::cout << alec::cursor_position(posy + 1, posx + 1);
 }
@@ -60,62 +58,6 @@ void Window::line_center(const std::string& text) const
 void Window::line_right(const std::string& text) const
 {
   line_next() << std::format("{:>{}}", text, wth());
-}
-
-void WindowBorder::render() const
-{
-  set_cursor(aypos(), axpos()) << std::string(awth(), ' ');
-
-  for (sz_t i = ypos(); i < ypos() + hgt(); i++) {
-    set_cursor(i, axpos()) << ' ';
-    set_cursor(i, axpos() + awth() - 1) << ' ';
-  }
-
-  set_cursor(aypos() + ahgt() - 1, axpos()) << std::string(awth(), ' ');
-}
-
-void WindowBox::render() const
-{
-  set_cursor(aypos(), axpos());
-  std::cout << "┌";
-  for (sz_t i = 0; i < wth(); i++) {
-    std::cout << "─";
-  }
-  std::cout << "┐";
-
-  for (sz_t i = ypos(); i < ypos() + hgt(); i++) {
-    set_cursor(i, axpos()) << "│";
-    set_cursor(i, axpos() + awth() - 1) << "│";
-  }
-
-  set_cursor(aypos() + ahgt() - 1, axpos());
-  std::cout << "└";
-  for (sz_t i = 0; i < wth(); i++) {
-    std::cout << "─";
-  }
-  std::cout << "┘";
-}
-
-void WindowBorderBox::render() const
-{
-  set_cursor(aypos(), axpos());
-  std::cout << "┌─";
-  for (sz_t i = 0; i < wth(); i++) {
-    std::cout << "─";
-  }
-  std::cout << "─┐";
-
-  for (sz_t i = ypos(); i < ypos() + hgt(); i++) {
-    set_cursor(i, axpos()) << "│ ";
-    set_cursor(i, axpos() + awth() - 2) << " │";
-  }
-
-  set_cursor(aypos() + ahgt() - 1, axpos());
-  std::cout << "└─";
-  for (sz_t i = 0; i < wth(); i++) {
-    std::cout << "─";
-  }
-  std::cout << "─┘";
 }
 
 }  // namespace display
