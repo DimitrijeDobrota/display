@@ -23,25 +23,35 @@ private:
 
   aplace_t place(std::size_t idx) const override
   {
-    const auto calc = [&]<typename R>(dim_t share) -> R
+    const auto [m, n] = m_grid;
+    const auto [w, h] = this->adim();
+    const sz_t unw = w / m;
+    const sz_t unh = h / n;
+
+    const auto calc = [&]<typename R>(const R share, bool addw, bool addh) -> R
     {
-      return {static_cast<sz_t>(this->awth() / m_grid.width * share.width),
-              static_cast<sz_t>(this->ahgt() / m_grid.height * share.height)};
+      const auto [sw, sh] = share;
+
+      const sz_t width = addw ? w - (unw * (m - sw)) : unw * sw;
+      const sz_t height = addh ? h - (unh * (n - sh)) : unh * sh;
+
+      return {width, height};
     };
 
-    const auto start = calc.template operator()<pos_t>(m_recs[idx].start);
-    const auto dim = calc.template operator()<dim_t>(m_recs[idx].dim);
+    const auto start = calc(m_recs[idx].start, false, false);
+    const auto dim = calc(m_recs[idx].dim, m_recs[idx].addw, m_recs[idx].addh);
     return {this->apos() + start, dim};
   }
 
-  dim_t m_grid;
-
   struct record_t
   {
-    dim_t start = {0xFFFF, 0xFFFF};
+    pos_t start;
     dim_t dim;
+    bool addw = false;
+    bool addh = false;
   };
 
+  dim_t m_grid;
   std::vector<record_t> m_recs;
 };
 
@@ -78,7 +88,7 @@ LayoutRigid<T>::LayoutRigid(aplace_t aplc, layout_t layout)
         continue;
       }
 
-      insert(m_recs[crnt].dim.width, cnt, m_recs[crnt].start.width, total);
+      insert(m_recs[crnt].dim.width, cnt, m_recs[crnt].start.x, total);
       total += cnt, cnt = 0;
     }
   }
@@ -94,9 +104,17 @@ LayoutRigid<T>::LayoutRigid(aplace_t aplc, layout_t layout)
         continue;
       }
 
-      insert(m_recs[crnt].dim.height, cnt, m_recs[crnt].start.height, total);
+      insert(m_recs[crnt].dim.height, cnt, m_recs[crnt].start.y, total);
       total += cnt, cnt = 0;
     }
+  }
+
+  for (std::size_t i = 0U; i < m_grid.height; i++) {
+    m_recs[layout[i][m_grid.width - 1]].addw = true;
+  }
+
+  for (std::size_t i = 0U; i < m_grid.width; i++) {
+    m_recs[layout[m_grid.height - 1][i]].addh = true;
   }
 }
 
