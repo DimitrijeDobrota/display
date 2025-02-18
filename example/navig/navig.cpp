@@ -14,7 +14,7 @@ namespace
 
 bool is_finished = false;  // NOLINT
 
-class WindowCustom : public display::WindowPivot
+class WindowCustom : public display::WindowPivot<display::WindowBorderBox>
 {
 public:
   WindowCustom(display::place_t aplc,
@@ -28,8 +28,8 @@ public:
   void render() const override
   {
     std::cout << alec::background_v<alec::Color::BLUE>;
+    line_reset();
 
-    line_empty(/* reset = */ true);
     line_center(m_menu.title);
     line_empty();
     for (std::size_t i = 0; i < m_menu.items.size(); i++) {
@@ -43,7 +43,8 @@ public:
         std::cout << alec::foreground_v<alec::Color::DEFAULT>;
       }
     }
-    line_empty();
+
+    display::WindowBorderBox::render();
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << std::flush;
@@ -94,8 +95,8 @@ private:
       width = std::max(width, item.prompt.size());
     }
 
-    return {static_cast<display::sz_t>(width + 2),
-            static_cast<display::sz_t>(menu.items.size() + 4)};
+    return {static_cast<display::sz_t>(width),
+            static_cast<display::sz_t>(menu.items.size() + 2)};
   }
 
   example::menu_t m_menu;
@@ -166,7 +167,7 @@ int menu_t::visit(const menu_t& menu)
     stk.push(&menu);
   }
 
-  layout.set_child<WindowCustom>(piv_t(PvtX::Center, PvtY::Center), *stk.top());
+  layout.set_child<WindowCustom>(piv_t(PvtX::Right, PvtY::Bottom), *stk.top());
   layout.render();
 
   return 0;

@@ -26,8 +26,8 @@ public:
   virtual void input(event& evnt) = 0;
 
   const auto& aplc() const { return m_aplc; }
-  const auto& apos() const { return aplc().apos; }
-  const auto& adim() const { return aplc().adim; }
+  const auto& apos() const { return aplc().pos; }
+  const auto& adim() const { return aplc().dim; }
   const auto& axpos() const { return apos().x; }
   const auto& aypos() const { return apos().y; }
   const auto& awth() const { return adim().width; }

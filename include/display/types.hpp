@@ -31,6 +31,14 @@ struct dim_t
   {
   }
 
+  dim_t operator+(dim_t rhs) const
+  {
+    return {
+        static_cast<sz_t>(width + rhs.width),
+        static_cast<sz_t>(height + rhs.height),
+    };
+  }
+
   sz_t width;
   sz_t height;
 };
@@ -70,14 +78,14 @@ struct pos_t
 
 struct place_t
 {
-  place_t(pos_t aposval, dim_t adimval)
-      : apos(aposval)
-      , adim(adimval)
+  place_t(pos_t posval, dim_t dimval)
+      : pos(posval)
+      , dim(dimval)
   {
   }
 
-  pos_t apos;
-  dim_t adim;
+  pos_t pos;
+  dim_t dim;
 };
 
 enum class PvtX : std::uint8_t

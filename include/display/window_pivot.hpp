@@ -6,11 +6,13 @@
 namespace display
 {
 
-class WindowPivot : public Window
+template<typename T>
+  requires(std::is_base_of_v<Window, T>)
+class WindowPivot : public T
 {
 public:
   WindowPivot(place_t aplc, piv_t piv, dim_t dim)
-      : Window(place(aplc, piv, dim))
+      : T(place(aplc, piv, dim, T::padding()))
       , m_piv(piv)
       , m_dim(dim)
   {
@@ -18,17 +20,17 @@ public:
 
   void resize(place_t aplc) override
   {
-    Window::resize(place(aplc, m_piv, m_dim));
+    T::resize(place(aplc, m_piv, m_dim, T::padding()));
   }
 
 protected:
-  static place_t place(place_t aplc, piv_t piv, dim_t dim)
+  static place_t place(place_t aplc, piv_t piv, dim_t dim, dim_t padding)
   {
-    const auto [cols, rows] = aplc.adim;
+    const auto [cols, rows] = aplc.dim;
     const sz_t colsh = cols / 2;
     const sz_t rowsh = rows / 2;
 
-    const auto [wdth, hght] = dim;
+    const auto [wdth, hght] = dim + padding;
     const sz_t wdthm = wdth / 2;
     const sz_t hghtm = hght / 2;
 
@@ -69,7 +71,7 @@ protected:
         break;
     }
 
-    return {aplc.apos + start, end - start};
+    return {aplc.pos + start, end - start};
   }
 
 private:

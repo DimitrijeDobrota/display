@@ -16,7 +16,7 @@ class LayoutRigid : public LayoutMulti<T>
 public:
   using layout_t = std::vector<std::vector<std::uint8_t>>;
 
-  LayoutRigid(place_t aplc, layout_t layout);  // NOLINT
+  LayoutRigid(place_t aplc, layout_t layout);
 
 private:
   std::size_t count_and_pad(layout_t& layout) const;

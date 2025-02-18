@@ -12,7 +12,7 @@ namespace
 using display::PvtX, display::PvtY;
 using display::sz_t, display::dim_t, display::piv_t, display::place_t;
 
-class WindowCustom : public display::WindowPivot
+class WindowCustom : public display::WindowPivot<display::Window>
 {
 public:
   explicit WindowCustom(place_t aplc, piv_t piv, dim_t dim)
@@ -27,8 +27,8 @@ public:
     color_red = (color_red + 25) % 256;
     std::cout << alec::background(color_red, 65, 65);
 
-    line_empty(/* reset = */ true);
-    for (std::size_t i = 1; i < ahgt(); i++) {
+    line_reset();
+    for (std::size_t i = 0; i < hgt(); i++) {
       line_empty();
     }
 
