@@ -16,12 +16,12 @@ class LayoutRigid : public LayoutMulti<T>
 public:
   using layout_t = std::vector<std::vector<std::uint8_t>>;
 
-  LayoutRigid(aplace_t aplc, layout_t layout);  // NOLINT
+  LayoutRigid(place_t aplc, layout_t layout);  // NOLINT
 
 private:
   std::size_t count_and_pad(layout_t& layout) const;
 
-  aplace_t place(std::size_t idx) const override
+  place_t place(std::size_t idx) const override
   {
     const auto [m, n] = m_grid;
     const auto [w, h] = this->adim();
@@ -56,7 +56,7 @@ private:
 };
 
 template<typename T>
-LayoutRigid<T>::LayoutRigid(aplace_t aplc, layout_t layout)
+LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
     : LayoutMulti<T>(aplc)
     , m_grid(static_cast<sz_t>(layout[0].size()),
              static_cast<sz_t>(layout.size()))

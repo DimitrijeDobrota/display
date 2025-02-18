@@ -7,7 +7,7 @@ namespace display
 class Element
 {
 public:
-  explicit Element(aplace_t aplc)
+  explicit Element(place_t aplc)
       : m_aplc(aplc)
   {
   }
@@ -20,7 +20,7 @@ public:
 
   virtual ~Element() = default;
 
-  virtual void resize(aplace_t aplc) { m_aplc = aplc; }
+  virtual void resize(place_t aplc) { m_aplc = aplc; }
   virtual void render() const = 0;
   virtual void clear() const = 0;
   virtual void input(event& evnt) = 0;
@@ -34,7 +34,7 @@ public:
   const auto& ahgt() const { return adim().height; }
 
 private:
-  aplace_t m_aplc;
+  place_t m_aplc;
 };
 
 }  // namespace display

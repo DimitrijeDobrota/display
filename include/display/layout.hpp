@@ -16,12 +16,12 @@ class Layout : public Element
 public:
   using ptr_t = std::unique_ptr<T>;
 
-  explicit Layout(aplace_t aplc)
+  explicit Layout(place_t aplc)
       : Element(aplc)
   {
   }
 
-  void resize(aplace_t aplc) override
+  void resize(place_t aplc) override
   {
     Element::resize(aplc);
 
@@ -89,12 +89,12 @@ class LayoutMulti : public Element
 public:
   using ptr_t = std::unique_ptr<T>;
 
-  explicit LayoutMulti(aplace_t aplc)
+  explicit LayoutMulti(place_t aplc)
       : Element(aplc)
   {
   }
 
-  void resize(aplace_t aplc) override
+  void resize(place_t aplc) override
   {
     Element::resize(aplc);
 
@@ -150,7 +150,7 @@ public:
   std::size_t size() { return m_children.size(); }
 
 private:
-  virtual aplace_t place(std::size_t /* unused */) const { return aplc(); }
+  virtual place_t place(std::size_t /* unused */) const { return aplc(); }
 
   std::vector<ptr_t> m_children;
 };

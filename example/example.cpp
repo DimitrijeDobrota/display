@@ -10,12 +10,12 @@ namespace
 {
 
 using display::PvtX, display::PvtY;
-using display::sz_t, display::dim_t, display::piv_t, display::aplace_t;
+using display::sz_t, display::dim_t, display::piv_t, display::place_t;
 
 class WindowCustom : public display::WindowPivot
 {
 public:
-  explicit WindowCustom(aplace_t aplc, piv_t piv, dim_t dim)
+  explicit WindowCustom(place_t aplc, piv_t piv, dim_t dim)
       : WindowPivot(aplc, piv, dim)
   {
   }
@@ -40,7 +40,7 @@ public:
 class LayoutCustom : public display::LayoutRigid<display::Layout<WindowCustom>>
 {
 public:
-  explicit LayoutCustom(display::aplace_t aplc)
+  explicit LayoutCustom(display::place_t aplc)
       : LayoutRigid(aplc, {{0, 1, 2}, {7, 8, 3}, {6, 5, 4}})
   {
     append().set_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));

@@ -14,7 +14,12 @@ using sz_t = std::uint16_t;
 
 struct dim_t
 {
-  dim_t(sz_t wdth = 0, sz_t hght = 0)  // NOLINT
+  dim_t()
+      : dim_t(0, 0)
+  {
+  }
+
+  dim_t(sz_t wdth, sz_t hght)  // NOLINT
       : width(wdth)
       , height(hght)
   {
@@ -32,7 +37,12 @@ struct dim_t
 
 struct pos_t
 {
-  pos_t(sz_t xpos = 0, sz_t ypos = 0)  // NOLINT
+  pos_t()
+      : pos_t(0, 0)
+  {
+  }
+
+  pos_t(sz_t xpos, sz_t ypos)
       : x(xpos)
       , y(ypos)
   {
@@ -48,32 +58,10 @@ struct pos_t
 
   dim_t operator-(pos_t rhs) const
   {
-    return {static_cast<sz_t>(x - rhs.x), static_cast<sz_t>(y - rhs.y)};
-  }
-
-  sz_t x;
-  sz_t y;
-};
-
-struct apos_t
-{
-  apos_t(sz_t xpos, sz_t ypos)
-      : x(xpos)
-      , y(ypos)
-  {
-  }
-
-  apos_t operator+(pos_t rhs) const
-  {
     return {
-        static_cast<sz_t>(x + rhs.x),
-        static_cast<sz_t>(y + rhs.y),
+        static_cast<sz_t>(x - rhs.x),
+        static_cast<sz_t>(y - rhs.y),
     };
-  }
-
-  dim_t operator-(apos_t rhs) const
-  {
-    return {static_cast<sz_t>(rhs.x - x), static_cast<sz_t>(rhs.y - y)};
   }
 
   sz_t x;
@@ -82,25 +70,13 @@ struct apos_t
 
 struct place_t
 {
-  place_t(pos_t posval, dim_t dimval)
-      : pos(posval)
-      , dim(dimval)
-  {
-  }
-
-  pos_t pos;
-  dim_t dim;
-};
-
-struct aplace_t
-{
-  aplace_t(apos_t aposval, dim_t adimval)
+  place_t(pos_t aposval, dim_t adimval)
       : apos(aposval)
       , adim(adimval)
   {
   }
 
-  apos_t apos;
+  pos_t apos;
   dim_t adim;
 };
 
@@ -120,7 +96,7 @@ enum class PvtY : std::uint8_t
 
 struct piv_t
 {
-  piv_t(PvtX pvtx = PvtX::Left, PvtY pvty = PvtY::Top)  // NOLINT
+  piv_t(PvtX pvtx, PvtY pvty)
       : x(pvtx)
       , y(pvty)
   {

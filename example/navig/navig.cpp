@@ -17,7 +17,7 @@ bool is_finished = false;  // NOLINT
 class WindowCustom : public display::WindowPivot
 {
 public:
-  WindowCustom(display::aplace_t aplc,
+  WindowCustom(display::place_t aplc,
                display::piv_t piv,
                const example::menu_t& menu)
       : WindowPivot(aplc, piv, calc_dim(menu))

@@ -9,20 +9,20 @@ namespace display
 class WindowPivot : public Window
 {
 public:
-  WindowPivot(aplace_t aplc, piv_t piv, dim_t dim)
+  WindowPivot(place_t aplc, piv_t piv, dim_t dim)
       : Window(place(aplc, piv, dim))
       , m_piv(piv)
       , m_dim(dim)
   {
   }
 
-  void resize(aplace_t aplc) override
+  void resize(place_t aplc) override
   {
     Window::resize(place(aplc, m_piv, m_dim));
   }
 
 protected:
-  static aplace_t place(aplace_t aplc, piv_t piv, dim_t dim)
+  static place_t place(place_t aplc, piv_t piv, dim_t dim)
   {
     const auto [cols, rows] = aplc.adim;
     const sz_t colsh = cols / 2;
@@ -34,8 +34,8 @@ protected:
 
     const sz_t zero = 0;
 
-    display::pos_t start;
-    display::pos_t end;
+    pos_t start;
+    pos_t end;
 
     using display::add_lim, display::sub_lim;
 

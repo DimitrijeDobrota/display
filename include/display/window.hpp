@@ -9,7 +9,7 @@ namespace display
 class Window : public Element
 {
 public:
-  explicit Window(aplace_t aplc)
+  explicit Window(place_t aplc)
       : Element(aplc)
   {
   }
