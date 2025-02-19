@@ -146,7 +146,7 @@ public:
     return *dynamic_cast<M*>(m_children[idx].get());
   }
 
-  std::size_t size() { return m_children.size(); }
+  std::size_t size() const { return m_children.size(); }
 
 protected:
   template<typename M = T, class... Args>

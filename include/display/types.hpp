@@ -68,6 +68,14 @@ struct dim_t
     };
   }
 
+  dim_t operator-(dim_t rhs) const
+  {
+    return {
+        static_cast<sz_t>(width - rhs.width),
+        static_cast<sz_t>(height - rhs.height),
+    };
+  }
+
   dim_t operator+(padd_t rhs) const
   {
     return {

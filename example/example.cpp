@@ -9,10 +9,9 @@
 namespace
 {
 
-using display::PvtX, display::PvtY;
-using display::sz_t, display::dim_t, display::piv_t, display::place_t;
+using namespace display;  // NOLINT
 
-class WindowCustom : public display::WindowPivot
+class WindowCustom : public WindowPivot
 {
 public:
   explicit WindowCustom(place_t aplc, piv_t piv, dim_t dim)
@@ -37,10 +36,10 @@ public:
   }
 };
 
-class LayoutCustom : public display::LayoutRigid<display::Layout<WindowCustom>>
+class LayoutCustom : public LayoutRigid<Layout<WindowCustom>>
 {
 public:
-  explicit LayoutCustom(display::place_t aplc)
+  explicit LayoutCustom(place_t aplc)
       : LayoutRigid(aplc, {{0, 1, 2}, {7, 8, 3}, {6, 5, 4}})
   {
     append().set_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));
@@ -53,11 +52,80 @@ public:
     append().set_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
     append().set_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
   }
+};
+
+class LayoutRigidBorder : public LayoutRigid<LayoutCustom>
+{
+public:
+  LayoutRigidBorder(place_t aplc, layout_t layout)
+      : LayoutRigid<LayoutCustom>(aplc, std::move(layout))
+  {
+  }
+
+  template<class... Args>
+  LayoutCustom& append(Args&&... args)
+  {
+    return LayoutMulti<LayoutCustom>::template append<LayoutCustom>(
+        place(size()), std::forward<Args>(args)...);
+  }
+
+  void resize(place_t aplc) override
+  {
+    LayoutRigid<LayoutCustom>::resize(aplc);
+
+    for (std::size_t i = 0; i < size(); i++) {
+      get(i).resize(place(i));
+    }
+  }
 
   void render() const override
   {
-    display::LayoutRigid<display::Layout<WindowCustom>>::render();
-    display::Element::render_border();
+    LayoutRigid<LayoutCustom>::render();
+    for (std::size_t i = 0; i < size(); i++) {
+      const auto [pos, dim] = LayoutRigid<LayoutCustom>::place(i);
+
+      set_cursor(pos.y, pos.x);
+
+      std::cout << "┌";
+      for (sz_t j = 1; j < dim.width; j++) {
+        std::cout << "─";
+      }
+      std::cout << "┐";
+
+      for (sz_t j = pos.y + 1; j < pos.y + dim.height; j++) {
+        set_cursor(j, pos.x) << "│";
+      }
+    }
+
+    for (sz_t i = aypos() + 1; i < aypos() + ahgt(); i++) {
+      set_cursor(i, axpos() + awth() - 1) << "│";
+    }
+
+    set_cursor(aypos() + ahgt() - 1, axpos());
+    std::cout << "└";
+    for (sz_t i = 2; i < awth(); i++) {
+      std::cout << "─";
+    }
+    std::cout << "┘";
+
+    std::cout << std::flush;
+  }
+
+private:
+  place_t place(std::size_t idx)
+  {
+    const auto [pos, dim] = LayoutRigid<LayoutCustom>::place(idx);
+    dim_t sub = {1, 1};
+
+    if (get_record(idx).addw) {
+      sub.width += 1;
+    }
+
+    if (get_record(idx).addh) {
+      sub.height += 1;
+    }
+
+    return {pos + pos_t(1, 1), dim - sub};
   }
 };
 
@@ -78,12 +146,12 @@ int main()
     };
     // clang-format on
 
-    auto& layout = display.layout().set_child<LayoutRigid<>>(split);
-    layout.append<LayoutCustom>();
-    layout.append<LayoutCustom>();
-    layout.append<LayoutCustom>();
-    layout.append<LayoutCustom>();
-    layout.append<LayoutCustom>();
+    auto& layout = display.layout().set_child<LayoutRigidBorder>(split);
+    layout.append();
+    layout.append();
+    layout.append();
+    layout.append();
+    layout.append();
 
     display.render();
     while (true) {
