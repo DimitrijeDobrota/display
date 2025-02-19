@@ -53,6 +53,12 @@ public:
     append().set_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
     append().set_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
   }
+
+  void render() const override
+  {
+    display::LayoutRigid<display::Layout<WindowCustom>>::render();
+    display::Element::render_border();
+  }
 };
 
 }  // namespace
@@ -67,8 +73,8 @@ int main()
     // clang-format off
     const LayoutRigid<>::layout_t split = {
         {1, 1, 2},
-        {0, 3, 2},
-        {4, 3, 2},
+        {0, 4, 2},
+        {3, 4, 2},
     };
     // clang-format on
 

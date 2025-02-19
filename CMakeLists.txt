@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.33
+    VERSION 0.1.34
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "git://git.dimitrijedobrota.com/display.git"
     LANGUAGES CXX
@@ -20,6 +20,7 @@ find_package(alec 0.1.13 CONFIG REQUIRED)
 add_library(
     display_display
     source/display.cpp
+    source/element.cpp
     source/window.cpp
     source/window_pivot.cpp
 )

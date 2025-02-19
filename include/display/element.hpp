@@ -25,6 +25,9 @@ public:
   virtual void clear() const = 0;
   virtual void input(event& evnt) = 0;
 
+  static std::ostream& set_cursor(sz_t posy, sz_t posx);
+  void render_border() const;
+
   const auto& aplc() const { return m_aplc; }
   const auto& apos() const { return aplc().pos; }
   const auto& adim() const { return aplc().dim; }

@@ -18,12 +18,9 @@ public:
   void clear() const override;
   void input(event& /* unused */) override {}
 
-  void render_border() const;
-
 protected:
   padd_t padd() const { return m_padd; }
 
-  static std::ostream& set_cursor(sz_t posy, sz_t posx);
   std::ostream& line_next() const;
 
   void line_reset() const;

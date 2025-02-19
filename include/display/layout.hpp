@@ -55,9 +55,7 @@ public:
     requires(std::is_base_of_v<T, M>)
   M& set_child(Args&&... args)
   {
-    if (has_child()) {
-      m_child->clear();
-    }
+    clear();
     m_child = std::make_unique<M>(aplc(), std::forward<Args>(args)...);
     return get_child<M>();
   }
@@ -121,6 +119,9 @@ public:
   {
     for (auto& child : m_children) {
       child->input(evnt);
+      if (evnt.type() == event::Type::NONE) {
+        break;
+      }
     }
   }
 
