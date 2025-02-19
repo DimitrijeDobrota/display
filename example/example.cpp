@@ -12,11 +12,11 @@ namespace
 using display::PvtX, display::PvtY;
 using display::sz_t, display::dim_t, display::piv_t, display::place_t;
 
-class WindowCustom : public display::WindowPivot<display::Window>
+class WindowCustom : public display::WindowPivot
 {
 public:
   explicit WindowCustom(place_t aplc, piv_t piv, dim_t dim)
-      : WindowPivot(aplc, piv, dim)
+      : WindowPivot(aplc, {0, 0}, piv, dim)
   {
   }
 

@@ -12,6 +12,35 @@ using event = alec::event;
 
 using sz_t = std::uint16_t;
 
+struct padd_t
+{
+  padd_t()
+      : padd_t(0, 0, 0, 0)
+  {
+  }
+
+  padd_t(sz_t width, sz_t height)  // NOLINT
+      : padd_t(width, width, height, height)
+  {
+  }
+
+  padd_t(sz_t leftpos, sz_t rightpos, sz_t toppos, sz_t bottompos)  // NOLINT
+      : left(leftpos)
+      , right(rightpos)
+      , top(toppos)
+      , bottom(bottompos)
+  {
+  }
+
+  sz_t width() const { return left + right; }
+  sz_t height() const { return top + bottom; }
+
+  sz_t left;
+  sz_t right;
+  sz_t top;
+  sz_t bottom;
+};
+
 struct dim_t
 {
   dim_t()
@@ -36,6 +65,14 @@ struct dim_t
     return {
         static_cast<sz_t>(width + rhs.width),
         static_cast<sz_t>(height + rhs.height),
+    };
+  }
+
+  dim_t operator+(padd_t rhs) const
+  {
+    return {
+        static_cast<sz_t>(width + rhs.width()),
+        static_cast<sz_t>(height + rhs.height()),
     };
   }
 

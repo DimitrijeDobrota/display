@@ -7,6 +7,41 @@
 namespace display
 {
 
+void Window::render() const
+{
+  const auto space = std::string(awth(), ' ');
+
+  for (sz_t i = aypos(); i < aypos() + m_padd.top; i++) {
+    set_cursor(i, axpos()) << space;
+  }
+
+  for (sz_t i = aypos() + ahgt() - m_padd.bottom; i < aypos() + ahgt(); i++) {
+    set_cursor(i, axpos()) << space;
+  }
+}
+
+void Window::render_border() const
+{
+  set_cursor(aypos(), axpos());
+  std::cout << "┌";
+  for (sz_t i = 2; i < awth(); i++) {
+    std::cout << "─";
+  }
+  std::cout << "┐";
+
+  for (sz_t i = aypos() + 1; i < aypos() + ahgt(); i++) {
+    set_cursor(i, axpos()) << "│";
+    set_cursor(i, axpos() + awth() - 1) << "│";
+  }
+
+  set_cursor(aypos() + ahgt() - 1, axpos());
+  std::cout << "└";
+  for (sz_t i = 2; i < awth(); i++) {
+    std::cout << "─";
+  }
+  std::cout << "┘";
+}
+
 void Window::clear() const
 {
   std::cout << alec::background_v<alec::Color::DEFAULT>;
@@ -37,27 +72,36 @@ std::ostream& Window::line_next() const
     return null;
   }
 
-  return set_cursor(m_ypos++, xpos());
+  return set_cursor(m_ypos++, axpos());
 }
 
 void Window::line_empty() const
 {
-  line_next() << std::string(wth(), ' ');
+  line_next() << std::string(awth(), ' ');
 }
 
 void Window::line_left(const std::string& text) const
 {
-  line_next() << std::format("{:<{}}", text, wth());
+  const auto left = std::string(m_padd.left, ' ');
+  const auto right = std::string(m_padd.right, ' ');
+
+  line_next() << left << std::format("{:<{}}", text, wth()) << right;
 }
 
 void Window::line_center(const std::string& text) const
 {
-  line_next() << std::format("{:^{}}", text, wth());
+  const auto left = std::string(m_padd.left, ' ');
+  const auto right = std::string(m_padd.right, ' ');
+
+  line_next() << left << std::format("{:^{}}", text, wth()) << right;
 }
 
 void Window::line_right(const std::string& text) const
 {
-  line_next() << std::format("{:>{}}", text, wth());
+  const auto left = std::string(m_padd.left, ' ');
+  const auto right = std::string(m_padd.right, ' ');
+
+  line_next() << left << std::format("{:>{}}", text, wth()) << right;
 }
 
 }  // namespace display

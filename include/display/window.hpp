@@ -5,23 +5,23 @@
 
 namespace display
 {
-
 class Window : public Element
 {
 public:
-  using ustring = std::basic_string<unsigned char>;
-
-  explicit Window(place_t aplc, dim_t padding = {0, 0})
+  explicit Window(place_t aplc, padd_t padd)
       : Element(aplc)
-      , m_padding(padding)
+      , m_padd(padd)
   {
   }
 
+  void render() const override;
   void clear() const override;
   void input(event& /* unused */) override {}
 
+  void render_border() const;
+
 protected:
-  static dim_t padding() { return {0, 0}; }
+  padd_t padd() const { return m_padd; }
 
   static std::ostream& set_cursor(sz_t posy, sz_t posx);
   std::ostream& line_next() const;
@@ -35,13 +35,21 @@ protected:
   place_t plc() const { return {pos(), dim()}; }
   pos_t pos() const { return {xpos(), ypos()}; }
   dim_t dim() const { return {wth(), hgt()}; }
-  sz_t xpos() const { return axpos() + (m_padding.width / 2); }
-  sz_t ypos() const { return aypos() + (m_padding.height / 2); }
-  sz_t wth() const { return awth() - m_padding.width; }
-  sz_t hgt() const { return ahgt() - m_padding.height; }
+  sz_t xpos() const { return axpos() + m_padd.left; }
+  sz_t ypos() const { return aypos() + m_padd.top; }
+  sz_t wth() const { return awth() - m_padd.width(); }
+  sz_t hgt() const { return ahgt() - m_padd.height(); }
 
 private:
-  dim_t m_padding;
+  using Element::adim;
+  using Element::ahgt;
+  using Element::aplc;
+  using Element::apos;
+  using Element::awth;
+  using Element::axpos;
+  using Element::aypos;
+
+  padd_t m_padd;
 
   mutable display::sz_t m_ypos = 0;
 };

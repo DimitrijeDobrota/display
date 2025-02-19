@@ -1,16 +1,17 @@
 #include "display/window_pivot.hpp"
+
 #include "display/utility.hpp"
 
 namespace display
 {
 
-place_t WindowPivot_place(place_t aplc, piv_t piv, dim_t dim, dim_t padding)
+place_t WindowPivot::place(place_t aplc, piv_t piv, dim_t dim)
 {
   const auto [cols, rows] = aplc.dim;
   const sz_t colsh = cols / 2;
   const sz_t rowsh = rows / 2;
 
-  const auto [wdth, hght] = dim + padding;
+  const auto [wdth, hght] = dim;
   const sz_t wdthm = wdth / 2;
   const sz_t hghtm = hght / 2;
 

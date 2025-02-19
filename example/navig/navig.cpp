@@ -6,7 +6,6 @@
 
 #include "display/display.hpp"
 #include "display/layout.hpp"
-#include "display/window_padd.hpp"
 #include "display/window_pivot.hpp"
 #include "menu.hpp"
 
@@ -15,15 +14,15 @@ namespace
 
 bool is_finished = false;  // NOLINT
 
-using display::WindowPivot, display::WindowPadd, display::WindowType;
+using display::WindowPivot;
 
-class WindowCustom : public WindowPivot<WindowPadd<WindowType::BorderBox>>
+class WindowCustom : public WindowPivot
 {
 public:
   WindowCustom(display::place_t aplc,
                display::piv_t piv,
                const example::menu_t& menu)
-      : WindowPivot(aplc, piv, calc_dim(menu))
+      : WindowPivot(aplc, {4, 5, 2, 4}, piv, calc_dim(menu))
       , m_menu(menu)
   {
   }
@@ -47,7 +46,8 @@ public:
       }
     }
 
-    WindowPadd<WindowType::BorderBox>::render();
+    WindowPivot::render();
+    Window::render_border();
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << std::flush;
