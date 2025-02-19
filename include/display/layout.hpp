@@ -99,7 +99,7 @@ public:
     Element::resize(aplc);
 
     for (std::size_t i = 0; i < size(); i++) {
-      m_children[i]->resize(place(i));
+      m_children[i]->resize(aplc);
     }
   }
 
@@ -128,9 +128,7 @@ public:
     requires(std::is_base_of_v<T, M>)
   M& append(Args&&... args)
   {
-    m_children.emplace_back(std::make_unique<M>(place(m_children.size()),
-                                                std::forward<Args>(args)...));
-    return get<M>(m_children.size() - 1);
+    return append<M>(aplc(), std::forward<Args>(args)...);
   }
 
   template<typename M = T>
@@ -149,9 +147,17 @@ public:
 
   std::size_t size() { return m_children.size(); }
 
-private:
-  virtual place_t place(std::size_t /* unused */) const { return aplc(); }
+protected:
+  template<typename M = T, class... Args>
+    requires(std::is_base_of_v<T, M>)
+  M& append(place_t aplc, Args&&... args)
+  {
+    m_children.emplace_back(
+        std::make_unique<M>(aplc, std::forward<Args>(args)...));
+    return get<M>(m_children.size() - 1);
+  }
 
+private:
   std::vector<ptr_t> m_children;
 };
 

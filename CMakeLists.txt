@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.1.32
+    VERSION 0.1.33
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "git://git.dimitrijedobrota.com/display.git"
     LANGUAGES CXX

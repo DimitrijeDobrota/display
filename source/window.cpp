@@ -15,7 +15,7 @@ void Window::render() const
     set_cursor(i, axpos()) << space;
   }
 
-  for (sz_t i = aypos() + ahgt() - m_padd.bottom; i < aypos() + ahgt(); i++) {
+  for (sz_t i = m_ypos; i < aypos() + ahgt(); i++) {
     set_cursor(i, axpos()) << space;
   }
 }

@@ -47,7 +47,7 @@ public:
     }
 
     WindowPivot::render();
-    Window::render_border();
+    WindowPivot::render_border();
 
     std::cout << alec::background_v<alec::Color::DEFAULT>;
     std::cout << std::flush;

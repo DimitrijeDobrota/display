@@ -18,10 +18,27 @@ public:
 
   LayoutRigid(place_t aplc, layout_t layout);
 
+  template<typename M = T, class... Args>
+    requires(std::is_base_of_v<T, M>)
+  M& append(Args&&... args)
+  {
+    return LayoutMulti<T>::template append<M>(place(this->size()),
+                                              std::forward<Args>(args)...);
+  }
+
+  void resize(place_t aplc) override
+  {
+    LayoutMulti<T>::resize(aplc);
+
+    for (std::size_t i = 0; i < this->size(); i++) {
+      this->get(i).resize(place(i));
+    }
+  }
+
 private:
   std::size_t count_and_pad(layout_t& layout) const;
 
-  place_t place(std::size_t idx) const override
+  place_t place(std::size_t idx) const
   {
     const auto [m, n] = m_grid;
     const auto [w, h] = this->adim();
