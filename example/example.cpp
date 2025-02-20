@@ -57,9 +57,33 @@ public:
 class LayoutRigidBorder : public LayoutRigid<LayoutCustom>
 {
 public:
-  LayoutRigidBorder(place_t aplc, layout_t layout)
-      : LayoutRigid<LayoutCustom>(aplc, std::move(layout))
+  LayoutRigidBorder(place_t aplc, const layout_t& layout)
+      : LayoutRigid<LayoutCustom>(aplc, layout)
   {
+    auto [m, n] = get_grid();
+
+    const auto valid = [&](std::size_t xpos, std::size_t ypos)
+    { return xpos >= 0 && xpos < n && ypos >= 0 && ypos < m; };
+
+    const auto get = [&](std::size_t xpos, std::size_t ypos) -> std::uint8_t
+    { return valid(xpos, ypos) ? layout[xpos][ypos] : 0xFF; };
+
+    for (std::size_t i = 0; i <= n; i++) {
+      for (std::size_t j = 0; j <= m; j++) {
+        const std::uint8_t ptl = get(i - 1, j - 1);
+        const std::uint8_t ptr = get(i - 1, j);
+        const std::uint8_t pbl = get(i, j - 1);
+        const std::uint8_t pbr = get(i, j);
+
+        uint8_t mask = 0;
+        mask |= ((ptl != ptr) ? 1U : 0U) << 0U;  // Top
+        mask |= ((ptr != pbr) ? 1U : 0U) << 1U;  // Right
+        mask |= ((pbr != pbl) ? 1U : 0U) << 2U;  // Bottom
+        mask |= ((pbl != ptl) ? 1U : 0U) << 3U;  // Left
+
+        m_corners.emplace_back(mask, i, j);
+      }
+    }
   }
 
   template<class... Args>
@@ -84,13 +108,11 @@ public:
     for (std::size_t i = 0; i < size(); i++) {
       const auto [pos, dim] = LayoutRigid<LayoutCustom>::place(i);
 
-      set_cursor(pos.y, pos.x);
+      set_cursor(pos.y, pos.x + 1);
 
-      std::cout << "┌";
       for (sz_t j = 1; j < dim.width; j++) {
         std::cout << "─";
       }
-      std::cout << "┐";
 
       for (sz_t j = pos.y + 1; j < pos.y + dim.height; j++) {
         set_cursor(j, pos.x) << "│";
@@ -101,12 +123,20 @@ public:
       set_cursor(i, axpos() + awth() - 1) << "│";
     }
 
-    set_cursor(aypos() + ahgt() - 1, axpos());
-    std::cout << "└";
+    set_cursor(aypos() + ahgt() - 1, axpos() + 1);
     for (sz_t i = 2; i < awth(); i++) {
       std::cout << "─";
     }
-    std::cout << "┘";
+
+    auto [m, n] = get_grid();
+    const auto [w, h] = adim();
+    const sz_t unw = w / m;
+    const sz_t unh = h / n;
+    for (const auto [mask, xpos, ypos] : m_corners) {
+      const sz_t xloc = xpos != n ? xpos * unw : axpos() + w;
+      const sz_t yloc = ypos != m ? ypos * unh : aypos() + h;
+      set_cursor(yloc, xloc) << corner_t::lookup[mask];  // NOLINT
+    };
 
     std::cout << std::flush;
   }
@@ -127,6 +157,29 @@ private:
 
     return {pos + pos_t(1, 1), dim - sub};
   }
+
+  struct corner_t
+  {
+    // clang-format off
+    constexpr static const char* lookup[] = { // NOLINT
+		"", "", "", "└", "", "│", "┌", "├",
+        "", "┘", "─", "┴", "┐", "┤", "┬", "┼"
+	};
+    // clang-format on
+
+    corner_t(std::uint8_t mask, sz_t ypos, sz_t xpos)  // NOLINT
+        : mask(mask)
+        , x(xpos)
+        , y(ypos)
+    {
+    }
+
+    std::uint8_t mask;
+    sz_t x;
+    sz_t y;
+  };
+
+  std::vector<corner_t> m_corners;
 };
 
 }  // namespace

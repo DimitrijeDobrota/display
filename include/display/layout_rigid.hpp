@@ -58,7 +58,8 @@ protected:
     return {this->apos() + start, dim};
   }
 
-  const auto& get_record(std::size_t idx) { return m_recs[idx]; }
+  const auto& get_record(std::size_t idx) const { return m_recs[idx]; }
+  auto get_grid() const { return m_grid; }
 
   struct record_t
   {
@@ -82,8 +83,7 @@ LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
              static_cast<sz_t>(layout.size()))
     , m_recs(count_and_pad(layout))
 {
-  static const auto& insert =
-      [](sz_t& count, std::uint8_t cnt, sz_t& pos, std::uint8_t total)
+  static const auto& insert = [](sz_t& count, sz_t cnt, sz_t& pos, sz_t total)
   {
     if (count != 0 && (pos != total || count != cnt)) {
       throw std::runtime_error("Invalid layout [Shape]");
@@ -97,11 +97,13 @@ LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
     count = cnt;
   };
 
-  for (std::size_t i = 0U; i < m_grid.height; i++) {
-    uint8_t cnt = 1;
+  static const sz_t one = 1;
+
+  for (sz_t i = 0U; i < m_grid.height; i++) {
+    sz_t cnt = 1;
 
     m_recs[layout[i][m_grid.width - 1]].addw = true;
-    for (std::size_t j = 0U; j < m_grid.width; j++) {
+    for (sz_t j = 0U; j < m_grid.width; j++) {
       const auto crnt = layout[i][j];
 
       if (crnt == layout[i][j + 1]) {
@@ -109,16 +111,16 @@ LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
         continue;
       }
 
-      insert(m_recs[crnt].dim.width, cnt, m_recs[crnt].start.x, j - cnt + 1);
+      insert(m_recs[crnt].dim.width, cnt, m_recs[crnt].start.x, j - cnt + one);
       cnt = 1;
     }
   }
 
-  for (std::size_t j = 0U; j < m_grid.width; j++) {
-    uint8_t cnt = 1;
+  for (sz_t j = 0U; j < m_grid.width; j++) {
+    sz_t cnt = 1;
 
     m_recs[layout[m_grid.height - 1][j]].addh = true;
-    for (std::size_t i = 0U; i < m_grid.height; i++) {
+    for (sz_t i = 0U; i < m_grid.height; i++) {
       const auto crnt = layout[i][j];
 
       if (crnt == layout[i + 1][j]) {
@@ -126,7 +128,7 @@ LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
         continue;
       }
 
-      insert(m_recs[crnt].dim.height, cnt, m_recs[crnt].start.y, i - cnt + 1);
+      insert(m_recs[crnt].dim.height, cnt, m_recs[crnt].start.y, i - cnt + one);
       cnt = 1;
     }
   }
