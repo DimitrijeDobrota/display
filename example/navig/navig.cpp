@@ -19,10 +19,10 @@ using display::WindowPivot;
 class WindowCustom : public WindowPivot
 {
 public:
-  WindowCustom(display::place_t aplc,
+  WindowCustom(display::plc_t aplc,
                display::piv_t piv,
                const example::menu_t& menu)
-      : WindowPivot(aplc, {4, 5, 2, 4}, piv, calc_dim(menu))
+      : WindowPivot(aplc, {4, 2, 5, 4}, piv, calc_dim(menu))
       , m_menu(menu)
   {
   }
@@ -98,8 +98,7 @@ private:
       width = std::max(width, item.prompt.size());
     }
 
-    return {static_cast<display::sz_t>(width),
-            static_cast<display::sz_t>(menu.items.size() + 2)};
+    return {display::wth_t(width), display::hgt_t(menu.items.size() + 2)};
   }
 
   example::menu_t m_menu;

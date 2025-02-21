@@ -9,14 +9,14 @@ namespace display
 
 void Window::render() const
 {
-  const auto space = std::string(awth(), ' ');
+  const auto space = std::string(awth().value(), ' ');
 
-  for (sz_t i = aypos(); i < aypos() + m_padd.top; i++) {
-    set_cursor(i, axpos()) << space;
+  for (auto j = aypos(); j < aypos() + m_padd.top; j++) {
+    set_cursor(axpos(), j) << space;
   }
 
-  for (sz_t i = m_ypos; i < aypos() + ahgt(); i++) {
-    set_cursor(i, axpos()) << space;
+  for (auto j = m_ypos; j < aypos() + ahgt(); j++) {
+    set_cursor(axpos(), j) << space;
   }
   std::cout << std::flush;
 }
@@ -26,8 +26,8 @@ void Window::clear() const
   std::cout << alec::background_v<alec::Color::DEFAULT>;
   std::cout << alec::foreground_v<alec::Color::DEFAULT>;
 
-  for (sz_t i = 0; i < aypos() + ahgt(); i++) {
-    set_cursor(i, axpos()) << std::string(awth(), ' ');
+  for (auto j = ypos_t(0); j < aypos() + ahgt(); j++) {
+    set_cursor(axpos(), j) << std::string(awth().value(), ' ');
   }
 
   std::cout << std::flush;
@@ -46,36 +46,36 @@ std::ostream& Window::line_next() const
     return null;
   }
 
-  return set_cursor(m_ypos++, axpos());
+  return set_cursor(axpos(), m_ypos++);
 }
 
 void Window::line_empty() const
 {
-  line_next() << std::string(awth(), ' ');
+  line_next() << std::string(awth().value(), ' ');
 }
 
 void Window::line_left(const std::string& text) const
 {
-  const auto left = std::string(m_padd.left, ' ');
-  const auto right = std::string(m_padd.right, ' ');
+  const auto left = std::string(m_padd.left.value(), ' ');
+  const auto right = std::string(m_padd.right.value(), ' ');
 
-  line_next() << left << std::format("{:<{}}", text, wth()) << right;
+  line_next() << left << std::format("{:<{}}", text, wth().value()) << right;
 }
 
 void Window::line_center(const std::string& text) const
 {
-  const auto left = std::string(m_padd.left, ' ');
-  const auto right = std::string(m_padd.right, ' ');
+  const auto left = std::string(m_padd.left.value(), ' ');
+  const auto right = std::string(m_padd.right.value(), ' ');
 
-  line_next() << left << std::format("{:^{}}", text, wth()) << right;
+  line_next() << left << std::format("{:^{}}", text, wth().value()) << right;
 }
 
 void Window::line_right(const std::string& text) const
 {
-  const auto left = std::string(m_padd.left, ' ');
-  const auto right = std::string(m_padd.right, ' ');
+  const auto left = std::string(m_padd.left.value(), ' ');
+  const auto right = std::string(m_padd.right.value(), ' ');
 
-  line_next() << left << std::format("{:>{}}", text, wth()) << right;
+  line_next() << left << std::format("{:>{}}", text, wth().value()) << right;
 }
 
 }  // namespace display

@@ -16,7 +16,7 @@ class LayoutRigid : public LayoutMulti<T>
 public:
   using layout_t = std::vector<std::vector<std::uint8_t>>;
 
-  LayoutRigid(place_t aplc, layout_t layout);
+  LayoutRigid(plc_t aplc, layout_t layout);
 
   template<typename M = T, class... Args>
     requires(std::is_base_of_v<T, M>)
@@ -26,7 +26,7 @@ public:
                                               std::forward<Args>(args)...);
   }
 
-  void resize(place_t aplc) override
+  void resize(plc_t aplc) override
   {
     LayoutMulti<T>::resize(aplc);
 
@@ -36,21 +36,25 @@ public:
   }
 
 protected:
-  place_t place(std::size_t idx) const
+  plc_t place(std::size_t idx) const
   {
     const auto [m, n] = m_grid;
     const auto [w, h] = this->adim();
-    const sz_t unw = w / m;
-    const sz_t unh = h / n;
+    const auto unw = w / m;
+    const auto unh = h / n;
 
     const auto calc = [&]<typename R>(const R share, bool addw, bool addh) -> R
     {
       const auto [sw, sh] = share;
 
-      const sz_t width = addw ? w - (unw * (m - sw)) : unw * sw;
-      const sz_t height = addh ? h - (unh * (n - sh)) : unh * sh;
+      const auto wth = addw ? w - (unw * (m - sw.value())) : unw * sw.value();
+      const auto hgt = addh ? h - (unh * (n - sh.value())) : unh * sh.value();
 
-      return {width, height};
+      if constexpr (std::is_same_v<R, pos_t>) {
+        return {xpos_t(wth.value()), ypos_t(hgt.value())};
+      } else {
+        return {wth, hgt};
+      }
     };
 
     const auto start = calc(m_recs[idx].start, false, false);
@@ -63,75 +67,29 @@ protected:
 
   struct record_t
   {
-    pos_t start;
-    dim_t dim;
+    pos_t start = {0, 0};
+    dim_t dim = {0, 0};
     bool addw = false;
     bool addh = false;
   };
 
 private:
   std::size_t count_and_pad(layout_t& layout) const;
+  void handle_cols(const layout_t& layout);
+  void handle_rows(const layout_t& layout);
 
   dim_t m_grid;
   std::vector<record_t> m_recs;
 };
 
 template<typename T>
-LayoutRigid<T>::LayoutRigid(place_t aplc, layout_t layout)
+LayoutRigid<T>::LayoutRigid(plc_t aplc, layout_t layout)
     : LayoutMulti<T>(aplc)
-    , m_grid(static_cast<sz_t>(layout[0].size()),
-             static_cast<sz_t>(layout.size()))
+    , m_grid(wth_t(layout[0].size()), hgt_t(layout.size()))
     , m_recs(count_and_pad(layout))
 {
-  static const auto& insert = [](sz_t& count, sz_t cnt, sz_t& pos, sz_t total)
-  {
-    if (count != 0 && (pos != total || count != cnt)) {
-      throw std::runtime_error("Invalid layout [Shape]");
-    }
-
-    if (count != 0) {
-      return;
-    }
-
-    pos = total;
-    count = cnt;
-  };
-
-  static const sz_t one = 1;
-
-  for (sz_t i = 0U; i < m_grid.height; i++) {
-    sz_t cnt = 1;
-
-    m_recs[layout[i][m_grid.width - 1]].addw = true;
-    for (sz_t j = 0U; j < m_grid.width; j++) {
-      const auto crnt = layout[i][j];
-
-      if (crnt == layout[i][j + 1]) {
-        cnt++;
-        continue;
-      }
-
-      insert(m_recs[crnt].dim.width, cnt, m_recs[crnt].start.x, j - cnt + one);
-      cnt = 1;
-    }
-  }
-
-  for (sz_t j = 0U; j < m_grid.width; j++) {
-    sz_t cnt = 1;
-
-    m_recs[layout[m_grid.height - 1][j]].addh = true;
-    for (sz_t i = 0U; i < m_grid.height; i++) {
-      const auto crnt = layout[i][j];
-
-      if (crnt == layout[i + 1][j]) {
-        cnt++;
-        continue;
-      }
-
-      insert(m_recs[crnt].dim.height, cnt, m_recs[crnt].start.y, i - cnt + one);
-      cnt = 1;
-    }
-  }
+  handle_cols(layout);
+  handle_rows(layout);
 }
 
 template<typename T>
@@ -139,16 +97,16 @@ std::size_t LayoutRigid<T>::count_and_pad(layout_t& layout) const
 {
   std::unordered_set<std::uint8_t> ust;
 
-  for (std::size_t i = 0U; i < m_grid.height; i++) {
-    for (std::size_t j = 0U; j < m_grid.width; j++) {
+  for (std::size_t i = 0U; i < m_grid.height.value(); i++) {
+    for (std::size_t j = 0U; j < m_grid.width.value(); j++) {
       ust.insert(layout[i][j]);
     }
     layout[i].emplace_back(0xFF);
   }
-  layout.emplace_back(m_grid.width, 0xFF);
+  layout.emplace_back(m_grid.width.value(), 0xFF);
 
-  for (std::size_t i = 0U; i < m_grid.height; i++) {
-    for (std::size_t j = 0U; j < m_grid.width; j++) {
+  for (std::size_t i = 0U; i < m_grid.height.value(); i++) {
+    for (std::size_t j = 0U; j < m_grid.width.value(); j++) {
       if (layout[i][j] >= ust.size()) {
         throw std::runtime_error("Invalid layout [Number]");
       }
@@ -156,6 +114,76 @@ std::size_t LayoutRigid<T>::count_and_pad(layout_t& layout) const
   }
 
   return ust.size();
+}
+
+template<typename T>
+void LayoutRigid<T>::handle_cols(const layout_t& layout)
+{
+  const auto [m, n] = get_grid();
+
+  for (std::size_t i = 0U; i < n.value(); i++) {
+    m_recs[layout[i][m.value() - 1]].addw = true;
+
+    auto cnt = wth_t(1);
+    for (std::size_t j = 0; j < m.value(); j++) {
+      const auto crnt = layout[i][j];
+
+      if (crnt == layout[i][j + 1]) {
+        cnt++;
+        continue;
+      }
+
+      auto& count = m_recs[crnt].dim.width;
+      auto& pos = m_recs[crnt].start.x;
+      const auto total = xpos_t(j) - cnt + 1;
+
+      if (count.value() != 0) {
+        if (pos != total || count != cnt) {
+          throw std::runtime_error("Invalid layout [Shape Col]");
+        }
+      } else {
+        pos = total;
+        count = cnt;
+      }
+
+      cnt = wth_t(1);
+    }
+  }
+}
+
+template<typename T>
+void LayoutRigid<T>::handle_rows(const layout_t& layout)
+{
+  const auto [m, n] = get_grid();
+
+  for (std::size_t j = 0U; j < m.value(); j++) {
+    m_recs[layout[n.value() - 1][j]].addh = true;
+
+    auto cnt = hgt_t(1);
+    for (std::size_t i = 0; i < n.value(); i++) {
+      const auto crnt = layout[i][j];
+
+      if (crnt == layout[i + 1][j]) {
+        cnt++;
+        continue;
+      }
+
+      auto& count = m_recs[crnt].dim.height;
+      auto& pos = m_recs[crnt].start.y;
+      const auto total = ypos_t(i) - cnt + 1;
+
+      if (count.value() != 0) {
+        if (pos != total || count != cnt) {
+          throw std::runtime_error("Invalid layout [Shape Row]");
+        }
+      } else {
+        pos = total;
+        count = cnt;
+      }
+
+      cnt = hgt_t(1);
+    }
+  }
 }
 
 }  // namespace display

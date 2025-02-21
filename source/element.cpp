@@ -5,29 +5,34 @@
 namespace display
 {
 
-std::ostream& Element::set_cursor(sz_t posy, sz_t posx)
+std::ostream& Element::set_cursor(xpos_t xpos, ypos_t ypos)
 {
-  return std::cout << alec::cursor_position(posy + 1, posx + 1);
+  return std::cout << alec::cursor_position(ypos.value() + 1, xpos.value() + 1);
+}
+
+std::ostream& Element::set_cursor(pos_t pos)
+{
+  return set_cursor(pos.x, pos.y);
 }
 
 void Element::render_border() const
 {
-  set_cursor(aypos(), axpos());
+  set_cursor(axpos(), aypos());
 
   std::cout << "┌";
-  for (sz_t i = 2; i < awth(); i++) {
+  for (auto i = wth_t(2); i < awth(); i++) {
     std::cout << "─";
   }
   std::cout << "┐";
 
-  for (sz_t i = aypos() + 1; i < aypos() + ahgt(); i++) {
-    set_cursor(i, axpos()) << "│";
-    set_cursor(i, axpos() + awth() - 1) << "│";
+  for (ypos_t j = aypos() + 1; j < aypos() + ahgt(); j++) {
+    set_cursor(axpos(), j) << "│";
+    set_cursor(axpos() + awth() - 1, j) << "│";
   }
 
-  set_cursor(aypos() + ahgt() - 1, axpos());
+  set_cursor(axpos(), aypos() + ahgt() - 1);
   std::cout << "└";
-  for (sz_t i = 2; i < awth(); i++) {
+  for (auto i = wth_t(2); i < awth(); i++) {
     std::cout << "─";
   }
   std::cout << "┘";

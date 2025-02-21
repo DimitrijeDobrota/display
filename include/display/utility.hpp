@@ -6,42 +6,36 @@ namespace display
 {
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr bool is_overflow_lim(T val, T add, T lim)
 {
   return val > lim || add > lim || val > lim - add;
 }
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr bool is_underflow_lim(T val, T sub, T lim)
 {
   return val < lim || sub < lim || val < lim + sub;
 }
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr bool is_overflow(T val, T add)
 {
   return val > std::numeric_limits<T>::max() - add;
 }
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr bool is_underflow(T val, T sub)
 {
   return val < std::numeric_limits<T>::min() + sub;
 }
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr T add_lim(T val, T add, T lim)
 {
   return !is_overflow_lim(val, add, lim) ? val + add : lim;
 }
 
 template<typename T>
-  requires std::is_unsigned_v<T>
 constexpr T sub_lim(T val, T sub, T lim)
 {
   return !is_underflow_lim(val, sub, lim) ? val - sub : lim;

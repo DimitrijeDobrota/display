@@ -1,12 +1,13 @@
+#include <cstdint>
 #include <limits>
 
 #include "display/utility.hpp"
 
-#include "display/types.hpp"
-
 int main()
 {
   using namespace display;  // NOLINT
+
+  using sz_t = std::uint16_t;
   using lim = std::numeric_limits<sz_t>;
 
   static constexpr const sz_t zero = 0;

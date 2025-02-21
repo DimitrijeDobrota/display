@@ -16,12 +16,12 @@ class Layout : public Element
 public:
   using ptr_t = std::unique_ptr<T>;
 
-  explicit Layout(place_t aplc)
+  explicit Layout(plc_t aplc)
       : Element(aplc)
   {
   }
 
-  void resize(place_t aplc) override
+  void resize(plc_t aplc) override
   {
     Element::resize(aplc);
 
@@ -87,12 +87,12 @@ class LayoutMulti : public Element
 public:
   using ptr_t = std::unique_ptr<T>;
 
-  explicit LayoutMulti(place_t aplc)
+  explicit LayoutMulti(plc_t aplc)
       : Element(aplc)
   {
   }
 
-  void resize(place_t aplc) override
+  void resize(plc_t aplc) override
   {
     Element::resize(aplc);
 
@@ -151,7 +151,7 @@ public:
 protected:
   template<typename M = T, class... Args>
     requires(std::is_base_of_v<T, M>)
-  M& append(place_t aplc, Args&&... args)
+  M& append(plc_t aplc, Args&&... args)
   {
     m_children.emplace_back(
         std::make_unique<M>(aplc, std::forward<Args>(args)...));

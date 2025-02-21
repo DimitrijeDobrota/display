@@ -7,7 +7,7 @@ namespace display
 class Element
 {
 public:
-  explicit Element(place_t aplc)
+  explicit Element(plc_t aplc)
       : m_aplc(aplc)
   {
   }
@@ -20,24 +20,26 @@ public:
 
   virtual ~Element() = default;
 
-  virtual void resize(place_t aplc) { m_aplc = aplc; }
+  virtual void resize(plc_t aplc) { m_aplc = aplc; }
   virtual void render() const = 0;
   virtual void clear() const = 0;
   virtual void input(event& evnt) = 0;
 
-  static std::ostream& set_cursor(sz_t posy, sz_t posx);
+  static std::ostream& set_cursor(xpos_t xpos, ypos_t ypos);
+  static std::ostream& set_cursor(pos_t pos);
+
   void render_border() const;
 
-  const auto& aplc() const { return m_aplc; }
-  const auto& apos() const { return aplc().pos; }
-  const auto& adim() const { return aplc().dim; }
-  const auto& axpos() const { return apos().x; }
-  const auto& aypos() const { return apos().y; }
-  const auto& awth() const { return adim().width; }
-  const auto& ahgt() const { return adim().height; }
+  plc_t aplc() const { return m_aplc; }
+  pos_t apos() const { return aplc().pos; }
+  dim_t adim() const { return aplc().dim; }
+  xpos_t axpos() const { return apos().x; }
+  ypos_t aypos() const { return apos().y; }
+  wth_t awth() const { return adim().width; }
+  hgt_t ahgt() const { return adim().height; }
 
 private:
-  place_t m_aplc;
+  plc_t m_aplc;
 };
 
 }  // namespace display

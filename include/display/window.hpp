@@ -5,10 +5,11 @@
 
 namespace display
 {
+
 class Window : public Element
 {
 public:
-  explicit Window(place_t aplc, padd_t padd)
+  explicit Window(plc_t aplc, pad_t padd)
       : Element(aplc)
       , m_padd(padd)
   {
@@ -19,7 +20,7 @@ public:
   void input(event& /* unused */) override {}
 
 protected:
-  padd_t padd() const { return m_padd; }
+  pad_t padd() const { return m_padd; }
 
   std::ostream& line_next() const;
 
@@ -29,13 +30,13 @@ protected:
   void line_center(const std::string& text) const;
   void line_right(const std::string& text) const;
 
-  place_t plc() const { return {pos(), dim()}; }
+  plc_t plc() const { return {pos(), dim()}; }
   pos_t pos() const { return {xpos(), ypos()}; }
   dim_t dim() const { return {wth(), hgt()}; }
-  sz_t xpos() const { return axpos() + m_padd.left; }
-  sz_t ypos() const { return aypos() + m_padd.top; }
-  sz_t wth() const { return awth() - m_padd.width(); }
-  sz_t hgt() const { return ahgt() - m_padd.height(); }
+  xpos_t xpos() const { return axpos() + m_padd.left; }
+  ypos_t ypos() const { return aypos() + m_padd.top; }
+  wth_t wth() const { return awth() - m_padd.width(); }
+  hgt_t hgt() const { return ahgt() - m_padd.height(); }
 
 private:
   using Element::adim;
@@ -46,9 +47,9 @@ private:
   using Element::axpos;
   using Element::aypos;
 
-  padd_t m_padd;
+  pad_t m_padd;
 
-  mutable display::sz_t m_ypos = 0;
+  mutable ypos_t m_ypos = ypos_t(0);
 };
 
 }  // namespace display
