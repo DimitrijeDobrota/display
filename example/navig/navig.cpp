@@ -2,8 +2,6 @@
 #include <stack>
 #include <string>
 
-#include <stamen/stamen.hpp>
-
 #include "display/display.hpp"
 #include "display/layout.hpp"
 #include "display/window_pivot.hpp"
