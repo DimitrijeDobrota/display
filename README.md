@@ -28,13 +28,13 @@ See the [`BUILDING`](BUILDING.md) document.
 > Please reference example folder for relevant usage examples.
 
 The library provides the following classes:
-`Element`: Base class that takes care of the absolute positioning
-`Display`: Main entry point to the terminal screen
-`Layout`: Container for one element
-`LayoutMulti`: Container for multiple elements
-`LayoutRigid`: Divide a screen into custom rectangles
-`Window`: Bass class for drawing to the screen
-`WindowPivot`: Window that can be placed in the corners or center of the layout
+* `Element`: Base class that takes care of the absolute positioning
+* `Display`: Main entry point to the terminal screen
+* `Layout`: Container for one element
+* `LayoutMulti`: Container for multiple elements
+* `LayoutRigid`: Divide a screen into custom rectangles
+* `Window`: Bass class for drawing to the screen
+* `WindowPivot`: Window that can be placed in the corners or center of the layout
 
 
 ## Version History
