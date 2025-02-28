@@ -1,5 +1,4 @@
 find_package(stamen 1.3 REQUIRED)
-find_package(poafloc 1.2 CONFIG REQUIRED)
 
 configure_file(menu.conf menu.conf COPYONLY)
 
