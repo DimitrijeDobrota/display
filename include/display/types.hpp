@@ -35,25 +35,25 @@ struct val_t
   auto& value() { return v; }
 
   // clang-format off
-  val_t operator+(val_t rhs) const { return val_t(static_cast<sz_t>(v + rhs.v)); }
-  val_t operator-(val_t rhs) const { return val_t(static_cast<sz_t>(v - rhs.v)); }
-  val_t operator*(val_t rhs) const { return val_t(static_cast<sz_t>(v * rhs.v)); }
-  val_t operator/(val_t rhs) const { return val_t(static_cast<sz_t>(v / rhs.v)); }
+  val_t operator+(val_t rhs) const { return val_t(v + rhs.v); }
+  val_t operator-(val_t rhs) const { return val_t(v > rhs.v ? v - rhs.v : 0); }
+  val_t operator*(val_t rhs) const { return val_t(v * rhs.v); }
+  val_t operator/(val_t rhs) const { return val_t(v / rhs.v); }
 
-  val_t operator+(int rhs) const { return val_t(static_cast<sz_t>(v + rhs)); }
-  val_t operator-(int rhs) const { return val_t(static_cast<sz_t>(v - rhs)); }
-  val_t operator*(int rhs) const { return val_t(static_cast<sz_t>(v * rhs)); }
-  val_t operator/(int rhs) const { return val_t(static_cast<sz_t>(v / rhs)); }
+  val_t operator+(std::size_t rhs) const { return *this + val_t(rhs); }
+  val_t operator-(std::size_t rhs) const { return *this - val_t(rhs); }
+  val_t operator*(std::size_t rhs) const { return *this * val_t(rhs); }
+  val_t operator/(std::size_t rhs) const { return *this / val_t(rhs); }
 
   auto& operator+=(val_t rhs) { v += rhs.v; return *this; }
   auto& operator-=(val_t rhs) { v -= rhs.v; return *this; }
   auto& operator*=(val_t rhs) { v *= rhs.v; return *this; }
   auto& operator/=(val_t rhs) { v /= rhs.v; return *this; }
 
-  auto& operator+=(int rhs) { v += rhs; return *this; }
-  auto& operator-=(int rhs) { v -= rhs; return *this; }
-  auto& operator*=(int rhs) { v *= rhs; return *this; }
-  auto& operator/=(int rhs) { v /= rhs; return *this; }
+  auto& operator+=(std::size_t rhs) { return *this += val_t(rhs); }
+  auto& operator-=(std::size_t rhs) { return *this -= val_t(rhs); }
+  auto& operator*=(std::size_t rhs) { return *this *= val_t(rhs); }
+  auto& operator/=(std::size_t rhs) { return *this /= val_t(rhs); }
 
   auto& operator++() { return *this += 1; }
   auto& operator--() { return *this -= 1; }
@@ -62,6 +62,10 @@ struct val_t
   val_t operator--(int) { return val_t(v--); }
 
   auto operator<=>(const val_t&) const = default;
+  bool operator==(const val_t&) const = default;
+
+  auto operator<=>(std::size_t rhs) const { return *this <=> val_t(rhs); }
+  bool operator==(std::size_t rhs) const { return *this == val_t(rhs); }
 
   friend std::ostream& operator<<(std::ostream& ost, val_t cord) {
       return ost << cord.value();

@@ -58,7 +58,7 @@ public:
     }
 
     if (evnt.key() == 'j') {
-      if (m_selected + 1 < m_menu.items.size()) {
+      if (m_selected + 1U < m_menu.items.size()) {
         m_selected++;
       }
       evnt.type() = display::event::Type::NONE;

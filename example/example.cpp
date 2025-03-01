@@ -63,23 +63,23 @@ public:
     const auto [m, n] = get_grid();
 
     const auto valid = [&](std::size_t xpos, std::size_t ypos)
-    { return xpos >= 0 && xpos < n.value() && ypos >= 0 && ypos < m.value(); };
+    { return xpos < n && ypos < m; };
 
     const auto get = [&](std::size_t xpos, std::size_t ypos) -> std::uint8_t
     { return valid(xpos, ypos) ? layout[xpos][ypos] : 0xFF; };
 
-    for (std::size_t i = 0; i <= n.value(); i++) {
-      for (std::size_t j = 0; j <= m.value(); j++) {
+    for (std::size_t i = 0; i <= n; i++) {
+      for (std::size_t j = 0; j <= m; j++) {
         const std::uint8_t ptl = get(i - 1, j - 1);
         const std::uint8_t ptr = get(i - 1, j);
         const std::uint8_t pbl = get(i, j - 1);
         const std::uint8_t pbr = get(i, j);
 
         uint8_t mask = 0;
-        mask |= ((ptl != ptr) ? 1U : 0U) << 0U;  // Top
-        mask |= ((ptr != pbr) ? 1U : 0U) << 1U;  // Right
-        mask |= ((pbr != pbl) ? 1U : 0U) << 2U;  // Bottom
-        mask |= ((pbl != ptl) ? 1U : 0U) << 3U;  // Left
+        mask |= static_cast<uint8_t>(((ptl != ptr) ? 1U : 0U) << 0U);  // Top
+        mask |= static_cast<uint8_t>(((ptr != pbr) ? 1U : 0U) << 1U);  // Right
+        mask |= static_cast<uint8_t>(((pbr != pbl) ? 1U : 0U) << 2U);  // Bottom
+        mask |= static_cast<uint8_t>(((pbl != ptl) ? 1U : 0U) << 3U);  // Left
 
         m_corners.emplace_back(mask, wth_t(j), hgt_t(i));
       }
@@ -170,16 +170,16 @@ private:
 	};
     // clang-format on
 
-    corner_t(std::uint8_t mask, wth_t wigth, hgt_t height)  // NOLINT
-        : mask(mask)
-        , wigth(wigth)
-        , height(height)
+    corner_t(std::uint8_t maskv, wth_t wigth, hgt_t height)  // NOLINT
+        : mask(maskv)
+        , wth(wigth)
+        , hgt(height)
     {
     }
 
     std::uint8_t mask;
-    wth_t wigth;
-    hgt_t height;
+    wth_t wth;
+    hgt_t hgt;
   };
 
   std::vector<corner_t> m_corners;

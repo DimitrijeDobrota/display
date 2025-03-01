@@ -21,12 +21,12 @@ plc_t WindowPivot::place(plc_t aplc, piv_t piv, dim_t dim)
       end.width = add_lim(start.width, wth, awth);
       break;
     case PvtX::Center:
-      start.width = sub_lim((awth / 2), (wth / 2), wth_t(0));
+      start.width = awth / 2 - wth / 2;
       end.width = add_lim(start.width, wth, awth);
       break;
     case PvtX::Right:
       end.width = awth;
-      start.width = sub_lim(end.width, wth, wth_t(0));
+      start.width = end.width - wth;
       break;
   }
 
@@ -36,12 +36,12 @@ plc_t WindowPivot::place(plc_t aplc, piv_t piv, dim_t dim)
       end.height = add_lim(start.height, hgt, ahth);
       break;
     case PvtY::Center:
-      start.height = sub_lim((ahth / 2), (hgt / 2), hgt_t(0));
+      start.height = ahth / 2 - hgt / 2;
       end.height = add_lim(start.height, hgt, ahth);
       break;
     case PvtY::Bottom:
       end.height = ahth;
-      start.height = sub_lim(end.height, hgt, hgt_t(0));
+      start.height = end.height - hgt;
       break;
   }
 

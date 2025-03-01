@@ -97,16 +97,16 @@ std::size_t LayoutRigid<T>::count_and_pad(layout_t& layout) const
 {
   std::unordered_set<std::uint8_t> ust;
 
-  for (std::size_t i = 0U; i < m_grid.height.value(); i++) {
-    for (std::size_t j = 0U; j < m_grid.width.value(); j++) {
+  for (std::size_t i = 0U; i < m_grid.height; i++) {
+    for (std::size_t j = 0U; j < m_grid.width; j++) {
       ust.insert(layout[i][j]);
     }
     layout[i].emplace_back(0xFF);
   }
   layout.emplace_back(m_grid.width.value(), 0xFF);
 
-  for (std::size_t i = 0U; i < m_grid.height.value(); i++) {
-    for (std::size_t j = 0U; j < m_grid.width.value(); j++) {
+  for (std::size_t i = 0U; i < m_grid.height; i++) {
+    for (std::size_t j = 0U; j < m_grid.width; j++) {
       if (layout[i][j] >= ust.size()) {
         throw std::runtime_error("Invalid layout [Number]");
       }
@@ -121,11 +121,11 @@ void LayoutRigid<T>::handle_cols(const layout_t& layout)
 {
   const auto [m, n] = get_grid();
 
-  for (std::size_t i = 0U; i < n.value(); i++) {
+  for (std::size_t i = 0U; i < n; i++) {
     m_recs[layout[i][m.value() - 1]].addw = true;
 
     auto cnt = wth_t(1);
-    for (std::size_t j = 0; j < m.value(); j++) {
+    for (std::size_t j = 0; j < m; j++) {
       const auto crnt = layout[i][j];
 
       if (crnt == layout[i][j + 1]) {
@@ -137,7 +137,7 @@ void LayoutRigid<T>::handle_cols(const layout_t& layout)
       auto& pos = m_recs[crnt].start.x;
       const auto total = xpos_t(j) - cnt + 1;
 
-      if (count.value() != 0) {
+      if (count != 0) {
         if (pos != total || count != cnt) {
           throw std::runtime_error("Invalid layout [Shape Col]");
         }
@@ -156,11 +156,11 @@ void LayoutRigid<T>::handle_rows(const layout_t& layout)
 {
   const auto [m, n] = get_grid();
 
-  for (std::size_t j = 0U; j < m.value(); j++) {
+  for (std::size_t j = 0U; j < m; j++) {
     m_recs[layout[n.value() - 1][j]].addh = true;
 
     auto cnt = hgt_t(1);
-    for (std::size_t i = 0; i < n.value(); i++) {
+    for (std::size_t i = 0; i < n; i++) {
       const auto crnt = layout[i][j];
 
       if (crnt == layout[i + 1][j]) {
@@ -172,7 +172,7 @@ void LayoutRigid<T>::handle_rows(const layout_t& layout)
       auto& pos = m_recs[crnt].start.y;
       const auto total = ypos_t(i) - cnt + 1;
 
-      if (count.value() != 0) {
+      if (count != 0) {
         if (pos != total || count != cnt) {
           throw std::runtime_error("Invalid layout [Shape Row]");
         }
