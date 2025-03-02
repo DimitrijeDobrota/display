@@ -5,14 +5,15 @@
 namespace display
 {
 
-std::ostream& Element::set_cursor(xpos_t xpos, ypos_t ypos)
+std::ostream& Element::set_cursor(xpos_t xapos, ypos_t yapos)
 {
-  return std::cout << alec::cursor_position(ypos.value() + 1, xpos.value() + 1);
+  return std::cout << alec::cursor_position(yapos.value() + 1,
+                                            xapos.value() + 1);
 }
 
-std::ostream& Element::set_cursor(pos_t pos)
+std::ostream& Element::set_cursor(pos_t apos)
 {
-  return set_cursor(pos.x, pos.y);
+  return set_cursor(apos.x, apos.y);
 }
 
 void Element::render_border() const
@@ -36,8 +37,6 @@ void Element::render_border() const
     std::cout << "─";
   }
   std::cout << "┘";
-
-  std::cout << std::flush;
 }
 
 }  // namespace display

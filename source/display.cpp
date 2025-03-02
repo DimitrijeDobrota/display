@@ -96,6 +96,7 @@ void Display::resize()
 void Display::render() const
 {
   m_layout.render();
+  std::cout << std::flush;
 }
 
 void Display::input(event& evnt)

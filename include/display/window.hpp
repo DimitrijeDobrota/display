@@ -22,6 +22,9 @@ public:
 protected:
   pad_t padd() const { return m_padd; }
 
+  std::ostream& set_cursor(xpos_t xpos, ypos_t ypos) const;
+  std::ostream& set_cursor(pos_t pos) const;
+
   std::ostream& line_next() const;
 
   void line_reset() const;

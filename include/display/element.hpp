@@ -16,7 +16,7 @@ public:
   Element& operator=(const Element&) = delete;
 
   Element(Element&&) = default;
-  Element& operator=(Element&&) = default;
+  Element& operator=(Element&&) = delete;
 
   virtual ~Element() = default;
 
@@ -25,8 +25,8 @@ public:
   virtual void clear() const = 0;
   virtual void input(event& evnt) = 0;
 
-  static std::ostream& set_cursor(xpos_t xpos, ypos_t ypos);
-  static std::ostream& set_cursor(pos_t pos);
+  static std::ostream& set_cursor(xpos_t xapos, ypos_t yapos);
+  static std::ostream& set_cursor(pos_t apos);
 
   void render_border() const;
 

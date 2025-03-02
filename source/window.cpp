@@ -7,18 +7,27 @@
 namespace display
 {
 
+std::ostream& Window::set_cursor(xpos_t xpos, ypos_t ypos) const
+{
+  return Element::set_cursor(axpos() + xpos, aypos() + ypos);
+}
+
+std::ostream& Window::set_cursor(pos_t pos) const
+{
+  return Element::set_cursor(apos() + pos);
+}
+
 void Window::render() const
 {
   const auto space = std::string(awth().value(), ' ');
 
   for (auto j = aypos(); j < aypos() + m_padd.top; j++) {
-    set_cursor(axpos(), j) << space;
+    Element::set_cursor(axpos(), j) << space;
   }
 
   for (auto j = m_ypos; j < aypos() + ahgt(); j++) {
-    set_cursor(axpos(), j) << space;
+    Element::set_cursor(axpos(), j) << space;
   }
-  std::cout << std::flush;
 }
 
 void Window::clear() const
@@ -27,10 +36,8 @@ void Window::clear() const
   std::cout << alec::foreground_v<alec::Color::DEFAULT>;
 
   for (auto j = ypos_t(0); j < aypos() + ahgt(); j++) {
-    set_cursor(axpos(), j) << std::string(awth().value(), ' ');
+    Element::set_cursor(axpos(), j) << std::string(awth().value(), ' ');
   }
-
-  std::cout << std::flush;
 }
 
 void Window::line_reset() const
@@ -46,7 +53,7 @@ std::ostream& Window::line_next() const
     return null;
   }
 
-  return set_cursor(axpos(), m_ypos++);
+  return Element::set_cursor(axpos(), m_ypos++);
 }
 
 void Window::line_empty() const
