@@ -22,7 +22,7 @@ public:
 
   virtual void resize(plc_t aplc) { m_aplc = aplc; }
   virtual void render() const = 0;
-  virtual void clear() const = 0;
+  virtual void clear() const;
   virtual void input(event& evnt) = 0;
 
   static std::ostream& set_cursor(xpos_t xapos, ypos_t yapos);

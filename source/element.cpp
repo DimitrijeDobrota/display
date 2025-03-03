@@ -16,6 +16,16 @@ std::ostream& Element::set_cursor(pos_t apos)
   return set_cursor(apos.x, apos.y);
 }
 
+void Element::clear() const
+{
+  std::cout << alec::background_v<alec::Color::DEFAULT>;
+  std::cout << alec::foreground_v<alec::Color::DEFAULT>;
+
+  for (auto j = ypos_t(0); j < aypos() + ahgt(); j++) {
+    Element::set_cursor(axpos(), j) << std::string(awth().value(), ' ');
+  }
+}
+
 void Element::render_border() const
 {
   set_cursor(axpos(), aypos());

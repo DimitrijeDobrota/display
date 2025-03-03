@@ -30,16 +30,6 @@ void Window::render() const
   }
 }
 
-void Window::clear() const
-{
-  std::cout << alec::background_v<alec::Color::DEFAULT>;
-  std::cout << alec::foreground_v<alec::Color::DEFAULT>;
-
-  for (auto j = ypos_t(0); j < aypos() + ahgt(); j++) {
-    Element::set_cursor(axpos(), j) << std::string(awth().value(), ' ');
-  }
-}
-
 void Window::line_reset() const
 {
   m_ypos = ypos();
