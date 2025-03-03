@@ -21,6 +21,15 @@ public:
   {
   }
 
+  Layout(plc_t aplc, ptr_t&& child)
+      : Element(aplc)
+      , m_child(std::move(child))
+  {
+    if (has_child()) {
+      m_child->resize(aplc);
+    }
+  }
+
   void resize(plc_t aplc) override
   {
     Element::resize(aplc);
@@ -73,6 +82,8 @@ public:
   {
     return *dynamic_cast<M*>(m_child.get());
   }
+
+  ptr_t&& release_child() { return std::move(m_child); }
 
   bool has_child() const { return m_child != nullptr; }
 
