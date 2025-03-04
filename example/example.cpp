@@ -42,15 +42,15 @@ public:
   explicit LayoutCustom(plc_t aplc)
       : LayoutRigid(aplc, {{0, 1, 2}, {7, 8, 3}, {6, 5, 4}})
   {
-    append().set_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Center), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Left, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Center, PvtY::Top), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Right, PvtY::Top), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Right, PvtY::Center), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Right, PvtY::Bottom), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Center, PvtY::Bottom), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Left, PvtY::Bottom), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
+    emplace().emplace_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
   }
 };
 
@@ -87,9 +87,9 @@ public:
   }
 
   template<class... Args>
-  LayoutCustom& append(Args&&... args)
+  LayoutCustom& emplace(Args&&... args)
   {
-    return LayoutMulti<LayoutCustom>::template append<LayoutCustom>(
+    return LayoutMulti<LayoutCustom>::template emplace<LayoutCustom>(
         place(size()), std::forward<Args>(args)...);
   }
 
@@ -202,12 +202,12 @@ int main()
     };
     // clang-format on
 
-    auto& layout = display.layout().set_child<LayoutRigidBorder>(split);
-    layout.append();
-    layout.append();
-    layout.append();
-    layout.append();
-    layout.append();
+    auto& layout = display.layout().emplace_child<LayoutRigidBorder>(split);
+    layout.emplace();
+    layout.emplace();
+    layout.emplace();
+    layout.emplace();
+    layout.emplace();
 
     display.render();
     while (true) {

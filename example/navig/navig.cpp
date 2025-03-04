@@ -167,7 +167,7 @@ int menu_t::visit(const menu_t& menu)
     stk.push(&menu);
   }
 
-  layout.set_child<WindowCustom>(piv_t(PvtX::Right, PvtY::Bottom), *stk.top());
+  layout.emplace_child<WindowCustom>(piv_t(PvtX::Right, PvtY::Bottom), *stk.top());
   layout.render();
 
   return 0;

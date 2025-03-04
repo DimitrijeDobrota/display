@@ -62,11 +62,17 @@ public:
 
   template<typename M = T, class... Args>
     requires(std::is_base_of_v<T, M>)
-  M& set_child(Args&&... args)
+  M& emplace_child(Args&&... args)
   {
     clear();
     m_child = std::make_unique<M>(aplc(), std::forward<Args>(args)...);
     return get_child<M>();
+  }
+
+  void set_child(ptr_t&& child)
+  {
+    clear();
+    m_child = std::move(child);
   }
 
   template<typename M = T>
@@ -138,9 +144,9 @@ public:
 
   template<typename M = T, class... Args>
     requires(std::is_base_of_v<T, M>)
-  M& append(Args&&... args)
+  M& emplace(Args&&... args)
   {
-    return append<M>(aplc(), std::forward<Args>(args)...);
+    return emplace<M>(aplc(), std::forward<Args>(args)...);
   }
 
   template<typename M = T>
@@ -162,7 +168,7 @@ public:
 protected:
   template<typename M = T, class... Args>
     requires(std::is_base_of_v<T, M>)
-  M& append(plc_t aplc, Args&&... args)
+  M& emplace(plc_t aplc, Args&&... args)
   {
     m_children.emplace_back(
         std::make_unique<M>(aplc, std::forward<Args>(args)...));
