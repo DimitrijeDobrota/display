@@ -198,6 +198,13 @@ struct pos_t
 
   pos_t operator+(dim_t rhs) const { return {x + rhs.width, y + rhs.height}; }
 
+  bool operator==(pos_t rhs) const { return x == rhs.x && y == rhs.y; }
+  bool operator!=(pos_t rhs) const { return x != rhs.x || y != rhs.y; }
+  bool operator<(pos_t rhs) const { return x < rhs.x && y < rhs.y; }
+  bool operator>(pos_t rhs) const { return x > rhs.x && y > rhs.y; }
+  bool operator<=(pos_t rhs) const { return x <= rhs.x && y <= rhs.y; }
+  bool operator>=(pos_t rhs) const { return x >= rhs.x && y >= rhs.y; }
+
   xpos_t x;
   ypos_t y;
 };
