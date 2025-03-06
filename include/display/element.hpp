@@ -16,7 +16,7 @@ public:
   Element& operator=(const Element&) = delete;
 
   Element(Element&&) = default;
-  Element& operator=(Element&&) = delete;
+  Element& operator=(Element&&) = default;
 
   virtual ~Element() = default;
 
