@@ -15,7 +15,6 @@ staff with it, and figure out the rest as I go.
 
 * CMake 3.14 or latter
 * Compiler with C++20 support (tested on clang version 19.1.7)
-* [`Stamen 1.3.0`](https://github.com/DimitrijeDobrota/stamen) (for running examples)
 
 
 ## Building and installing
