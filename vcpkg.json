@@ -4,7 +4,11 @@
   "dependencies": [
       {
           "name": "alec",
-          "version>=": "0.1.17"
+          "version>=": "0.2.0"
+      },
+      {
+          "name": "based",
+          "version>=": "0.2.0"
       }
   ],
   "default-features": [],

@@ -23,8 +23,8 @@ void Window::render() const
 
 void Window::clear() const
 {
-  std::cout << alec::background_v<alec::Color::DEFAULT>;
-  std::cout << alec::foreground_v<alec::Color::DEFAULT>;
+  std::cout << alec::background_v<alec::color::def>;
+  std::cout << alec::foreground_v<alec::color::def>;
 
   for (auto j = ypos_t(0); j < aypos() + ahgt(); j++) {
     set_cursor(axpos(), j) << std::string(awth().value(), ' ');

@@ -9,7 +9,7 @@
       "kind": "git",
       "repository": "git://git.dimitrijedobrota.com/vcpkg-registry.git",
       "baseline": "93159a6024f170bb5fedd97daad8b7dd8dbc99ab",
-      "packages": [ "alec", "stamen" ]
+      "packages": [ "alec", "based", "stamen" ]
     }
   ]
 }

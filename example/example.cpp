@@ -31,7 +31,7 @@ public:
       line_empty();
     }
 
-    std::cout << alec::background_v<alec::Color::DEFAULT>;
+    std::cout << alec::background_v<alec::color::def>;
     std::cout << std::flush;
   }
 };
@@ -63,10 +63,14 @@ public:
     const auto [m, n] = get_grid();
 
     const auto valid = [&](std::size_t xpos, std::size_t ypos)
-    { return xpos >= 0 && xpos < n.value() && ypos >= 0 && ypos < m.value(); };
+    {
+      return xpos >= 0 && xpos < n.value() && ypos >= 0 && ypos < m.value();
+    };
 
     const auto get = [&](std::size_t xpos, std::size_t ypos) -> std::uint8_t
-    { return valid(xpos, ypos) ? layout[xpos][ypos] : 0xFF; };
+    {
+      return valid(xpos, ypos) ? layout[xpos][ypos] : 0xFF;
+    };
 
     for (std::size_t i = 0; i <= n.value(); i++) {
       for (std::size_t j = 0; j <= m.value(); j++) {
@@ -90,7 +94,8 @@ public:
   LayoutCustom& append(Args&&... args)
   {
     return LayoutMulti<LayoutCustom>::template append<LayoutCustom>(
-        place(size()), std::forward<Args>(args)...);
+        place(size()), std::forward<Args>(args)...
+    );
   }
 
   void resize(plc_t aplc) override
@@ -212,13 +217,13 @@ int main()
     display.render();
     while (true) {
       const auto evnt = display.get_event();
-      if (evnt.type() == event::Type::RESIZE) {
-        std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
+      if (evnt.type() == event::type::resize) {
+        std::cout << alec::erase_display_v<alec::motion::whole>;
         display.render();
         continue;
       }
 
-      if (evnt.type() == event::Type::KEY && evnt.key() == 'q') {
+      if (evnt.type() == event::type::key && evnt.key() == 'q') {
         break;
       }
     }

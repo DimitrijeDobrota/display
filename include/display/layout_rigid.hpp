@@ -22,8 +22,9 @@ public:
     requires(std::is_base_of_v<T, M>)
   M& append(Args&&... args)
   {
-    return LayoutMulti<T>::template append<M>(place(this->size()),
-                                              std::forward<Args>(args)...);
+    return LayoutMulti<T>::template append<M>(
+        place(this->size()), std::forward<Args>(args)...
+    );
   }
 
   void resize(plc_t aplc) override

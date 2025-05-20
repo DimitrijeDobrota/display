@@ -66,7 +66,7 @@ event Display::get_event()  // NOLINT
 {
   if (is_resize_track && m_is_resized) {
     Display::reset_resized();
-    return {event::Type::RESIZE, 0, 0};
+    return {event::type::resize, 0, 0};
   }
 
   return alec::get_event();

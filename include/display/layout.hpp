@@ -119,7 +119,7 @@ public:
   {
     for (auto& child : m_children) {
       child->input(evnt);
-      if (evnt.type() == event::Type::NONE) {
+      if (evnt.type() == event::type::none) {
         break;
       }
     }
@@ -154,7 +154,8 @@ protected:
   M& append(plc_t aplc, Args&&... args)
   {
     m_children.emplace_back(
-        std::make_unique<M>(aplc, std::forward<Args>(args)...));
+        std::make_unique<M>(aplc, std::forward<Args>(args)...)
+    );
     return get<M>(m_children.size() - 1);
   }
 

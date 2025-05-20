@@ -5,6 +5,7 @@
 #include <utility>
 
 #include <alec/alec.hpp>
+#include <alec/terminal.hpp>
 
 namespace display
 {
@@ -126,10 +127,12 @@ struct pad_t
   {
   }
 
-  pad_t(int leftpos,  // NOLINT
-        int toppos,
-        int rightpos,
-        int bottompos)
+  pad_t(
+      int leftpos,  // NOLINT
+      int toppos,
+      int rightpos,
+      int bottompos
+  )
       : left(leftpos)
       , right(rightpos)
       , top(toppos)

@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     display
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION "TUI library"
     HOMEPAGE_URL "git://git.dimitrijedobrota.com/display.git"
     LANGUAGES CXX
@@ -13,7 +13,8 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-find_package(alec 0.1.13 CONFIG REQUIRED)
+find_package(alec 0.2.0 CONFIG REQUIRED)
+find_package(based 0.2.0 CONFIG REQUIRED)
 
 # ---- Declare library ----
 
@@ -25,6 +26,7 @@ add_library(
     source/window_pivot.cpp
 )
 target_link_libraries(display_display PUBLIC alec::alec)
+target_link_libraries(display_display PUBLIC based::based)
 add_library(display::display ALIAS display_display)
 
 include(GenerateExportHeader)
