@@ -8,16 +8,18 @@
 namespace
 {
 
-template<const char* Val>
+template<const char* val>
 inline void write()
 {
-  ::write(STDIN_FILENO, Val, sizeof(Val));
+  ::write(STDIN_FILENO, val, sizeof(val));
 }
 
 }  // namespace
 
 namespace display
 {
+
+using namespace literals;  // NOLINT(*namespace*)
 
 bool Display::is_resize_track = false;
 
@@ -28,7 +30,7 @@ Display& Display::display()
 }
 
 Display::Display()
-    : m_layout(plc_t(pos_t(0, 0), alec::get_screen_size()))
+    : m_layout(plc_t(pos_t(0_x, 0_y), alec::get_screen_size()))
 {
   struct sigaction old_sig_action = {};
   sigaction(SIGWINCH, nullptr, &old_sig_action);
@@ -90,7 +92,7 @@ bool Display::get_resized() const
 
 void Display::resize()
 {
-  m_layout.resize(plc_t(pos_t(0, 0), alec::get_screen_size()));
+  m_layout.resize(plc_t(pos_t(0_x, 0_y), alec::get_screen_size()));
 }
 
 void Display::render() const

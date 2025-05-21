@@ -20,7 +20,7 @@ public:
   void input(event& /* unused */) override {}
 
 protected:
-  pad_t padd() const { return m_padd; }
+  [[nodiscard]] pad_t padd() const { return m_padd; }
 
   std::ostream& line_next() const;
 
@@ -30,13 +30,13 @@ protected:
   void line_center(const std::string& text) const;
   void line_right(const std::string& text) const;
 
-  plc_t plc() const { return {pos(), dim()}; }
-  pos_t pos() const { return {xpos(), ypos()}; }
-  dim_t dim() const { return {wth(), hgt()}; }
-  xpos_t xpos() const { return axpos() + m_padd.left; }
-  ypos_t ypos() const { return aypos() + m_padd.top; }
-  wth_t wth() const { return awth() - m_padd.width(); }
-  hgt_t hgt() const { return ahgt() - m_padd.height(); }
+  [[nodiscard]] plc_t plc() const { return {pos(), dim()}; }
+  [[nodiscard]] pos_t pos() const { return {xpos(), ypos()}; }
+  [[nodiscard]] dim_t dim() const { return {wth(), hgt()}; }
+  [[nodiscard]] xpos_t xpos() const { return axpos() + m_padd.left; }
+  [[nodiscard]] ypos_t ypos() const { return aypos() + m_padd.top; }
+  [[nodiscard]] wth_t wth() const { return awth() - m_padd.width(); }
+  [[nodiscard]] hgt_t hgt() const { return ahgt() - m_padd.height(); }
 
 private:
   using Element::adim;

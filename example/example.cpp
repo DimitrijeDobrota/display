@@ -9,25 +9,34 @@
 namespace
 {
 
-using namespace display;  // NOLINT
+using namespace based::literals;  // NOLINT(*namespace*)
+
+using namespace display;  // NOLINT(*namespace*)
+using namespace based::literals;  // NOLINT(*namespace*)
 
 class WindowCustom : public WindowPivot
 {
 public:
   explicit WindowCustom(plc_t aplc, piv_t piv, dim_t dim)
-      : WindowPivot(aplc, pad_t(0, 0), piv, dim)
+      : WindowPivot(aplc, pad_t(0_w, 0_h), piv, dim)
   {
   }
 
   void render() const override
   {
-    static int color_red = 0;
+    static constexpr based::u8 inc = 0_u8;
+    static constexpr based::u8 mod = 256_u8;
+    static constexpr based::u8 color_green = 0_u8;
+    static constexpr based::u8 color_blue = 0_u8;
+    static based::u8 color_red = 0_u8;
 
-    color_red = (color_red + 25) % 256;
-    std::cout << alec::background(color_red, 65, 65);
+    color_red = (color_red + inc) % mod;
+    std::cout << alec::background(
+        color_red.value, color_green.value, color_blue.value
+    );
 
     line_reset();
-    for (auto i = hgt_t(0); i < hgt(); i++) {
+    for (auto i = 0_h; i < hgt(); ++i) {
       line_empty();
     }
 
@@ -40,17 +49,23 @@ class LayoutCustom : public LayoutRigid<Layout<WindowCustom>>
 {
 public:
   explicit LayoutCustom(plc_t aplc)
+      // NOLINTNEXTLINE(*magic*)
       : LayoutRigid(aplc, {{0, 1, 2}, {7, 8, 3}, {6, 5, 4}})
   {
-    append().set_child(piv_t(PvtX::Left, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Top), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Center), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Right, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Left, PvtY::Bottom), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Left, PvtY::Center), dim_t(12, 4));
-    append().set_child(piv_t(PvtX::Center, PvtY::Center), dim_t(12, 4));
+    using x = piv_t::x;
+    using y = piv_t::y;
+
+    const dim_t dim(12_w, 4_h);
+
+    append().set_child(piv_t(x::left, y::top), dim);
+    append().set_child(piv_t(x::center, y::top), dim);
+    append().set_child(piv_t(x::right, y::top), dim);
+    append().set_child(piv_t(x::right, y::center), dim);
+    append().set_child(piv_t(x::right, y::bottom), dim);
+    append().set_child(piv_t(x::center, y::bottom), dim);
+    append().set_child(piv_t(x::left, y::bottom), dim);
+    append().set_child(piv_t(x::left, y::center), dim);
+    append().set_child(piv_t(x::center, y::center), dim);
   }
 };
 
@@ -64,23 +79,24 @@ public:
 
     const auto valid = [&](std::size_t xpos, std::size_t ypos)
     {
-      return xpos >= 0 && xpos < n.value() && ypos >= 0 && ypos < m.value();
+      return xpos < n.value && ypos < m.value;
     };
 
-    const auto get = [&](std::size_t xpos, std::size_t ypos) -> std::uint8_t
+    const auto get = [&](std::size_t xpos, std::size_t ypos) -> based::bu8
     {
-      return valid(xpos, ypos) ? layout[xpos][ypos] : 0xFF;
+      static constexpr auto not_found = 0xFF;
+      return valid(xpos, ypos) ? layout[xpos][ypos] : not_found;
     };
 
-    for (std::size_t i = 0; i <= n.value(); i++) {
-      for (std::size_t j = 0; j <= m.value(); j++) {
-        const std::uint8_t ptl = get(i - 1, j - 1);
-        const std::uint8_t ptr = get(i - 1, j);
-        const std::uint8_t pbl = get(i, j - 1);
-        const std::uint8_t pbr = get(i, j);
+    for (std::size_t i = 0; i <= n.value; i++) {
+      for (std::size_t j = 0; j <= m.value; j++) {
+        const based::bu8 ptl = get(i - 1, j - 1);
+        const based::bu8 ptr = get(i - 1, j);
+        const based::bu8 pbl = get(i, j - 1);
+        const based::bu8 pbr = get(i, j);
 
-        uint8_t mask = 0;
-        mask |= ((ptl != ptr) ? 1U : 0U) << 0U;  // Top
+        based::bu8 mask = 0;
+        mask |= ((ptl != ptr) ? 1U : 0U);  // Top
         mask |= ((ptr != pbr) ? 1U : 0U) << 1U;  // Right
         mask |= ((pbr != pbl) ? 1U : 0U) << 2U;  // Bottom
         mask |= ((pbl != ptl) ? 1U : 0U) << 3U;  // Left
@@ -114,25 +130,25 @@ public:
       const auto [pos, dim] = LayoutRigid<LayoutCustom>::place(i);
 
       // Top of each element
-      set_cursor(pos.x + 1, pos.y);
-      for (auto j = wth_t(1); j < dim.width; j++) {
+      set_cursor(pos.x + 1_x, pos.y);
+      for (auto j = 1_w; j < dim.width; ++j) {
         std::cout << "─";
       }
 
       // Left of each element
-      for (auto j = pos.y + 1; j < pos.y + dim.height; j++) {
+      for (auto j = pos.y + 1_y; j < pos.y + dim.height; ++j) {
         set_cursor(pos.x, j) << "│";
       }
     }
 
     // Right of the layout
-    for (auto j = aypos() + 1; j < aypos() + ahgt(); j++) {
-      set_cursor(axpos() + awth() - 1, j) << "│";
+    for (auto j = aypos() + 1_y; j < aypos() + ahgt(); ++j) {
+      set_cursor(axpos() + awth() - 1_w, j) << "│";
     }
 
     // Bottom of the layout
-    set_cursor(axpos() + 1, aypos() + ahgt() - 1);
-    for (auto i = wth_t(2); i < awth(); i++) {
+    set_cursor(axpos() + 1_x, aypos() + ahgt() - 1_h);
+    for (auto i = 2_w; i < awth(); ++i) {
       std::cout << "─";
     }
 
@@ -141,8 +157,8 @@ public:
     const auto unw = w / m;
     const auto unh = h / n;
     for (const auto [mask, wth, hgt] : m_corners) {
-      const auto xloc = wth != m ? xpos_t((wth * unw).value()) : axpos() + w;
-      const auto yloc = hgt != n ? ypos_t((hgt * unh).value()) : aypos() + h;
+      const auto xloc = wth != m ? xpos_t((wth * unw).value) : axpos() + w;
+      const auto yloc = hgt != n ? ypos_t((hgt * unh).value) : aypos() + h;
       set_cursor(xloc, yloc) << corner_t::lookup[mask];  // NOLINT
     };
 
@@ -153,17 +169,17 @@ private:
   plc_t place(std::size_t idx)
   {
     const auto [pos, dim] = LayoutRigid<LayoutCustom>::place(idx);
-    dim_t sub = {1, 1};
+    dim_t sub = {1_w, 1_h};
 
     if (get_record(idx).addw) {
-      sub.width += 1;
+      sub.width += 1_w;
     }
 
     if (get_record(idx).addh) {
-      sub.height += 1;
+      sub.height += 1_h;
     }
 
-    return {pos + pos_t(1, 1), dim - sub};
+    return {pos + pos_t(1_x, 1_y), dim - sub};
   }
 
   struct corner_t
@@ -175,14 +191,14 @@ private:
 	};
     // clang-format on
 
-    corner_t(std::uint8_t mask, wth_t wigth, hgt_t height)  // NOLINT
-        : mask(mask)
-        , wigth(wigth)
-        , height(height)
+    corner_t(based::bu8 msk, wth_t wth, hgt_t hgt)  // NOLINT
+        : mask(msk)
+        , wigth(wth)
+        , height(hgt)
     {
     }
 
-    std::uint8_t mask;
+    based::bu8 mask;
     wth_t wigth;
     hgt_t height;
   };

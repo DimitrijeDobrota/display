@@ -17,12 +17,12 @@ public:
   Display& operator=(const Display&) = delete;
   Display& operator=(Display&&) = delete;
 
-  const auto& layout() const { return m_layout; }
-  auto& layout() { return m_layout; }
+  [[nodiscard]] const auto& layout() const { return m_layout; }
+  [[nodiscard]] auto& layout() { return m_layout; }
 
-  event get_event();
+  [[nodiscard]] event get_event();
 
-  bool get_resized() const;
+  [[nodiscard]] bool get_resized() const;
   void set_resized();
   void reset_resized();
 

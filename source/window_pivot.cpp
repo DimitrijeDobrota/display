@@ -5,43 +5,45 @@
 namespace display
 {
 
+using namespace literals;  // NOLINT(*namespace*)
+
 plc_t WindowPivot::place(plc_t aplc, piv_t piv, dim_t dim)
 {
   const auto [awth, ahth] = aplc.dim;
   const auto [wth, hgt] = dim;
 
-  dim_t start(0, 0);
-  dim_t end(0, 0);
+  dim_t start(0_w, 0_h);
+  dim_t end(0_w, 0_h);
 
   using display::add_lim, display::sub_lim;
 
-  switch (piv.x) {
-    case PvtX::Left:
-      start.width = wth_t(0);
+  switch (piv.piv_x()) {
+    case piv_t::x::left():
+      start.width = 0_w;
       end.width = add_lim(start.width, wth, awth);
       break;
-    case PvtX::Center:
-      start.width = sub_lim((awth / 2), (wth / 2), wth_t(0));
+    case piv_t::x::center():
+      start.width = sub_lim((awth / 2_w), (wth / 2_w), 0_w);
       end.width = add_lim(start.width, wth, awth);
       break;
-    case PvtX::Right:
+    case piv_t::x::right():
       end.width = awth;
-      start.width = sub_lim(end.width, wth, wth_t(0));
+      start.width = sub_lim(end.width, wth, 0_w);
       break;
   }
 
-  switch (piv.y) {
-    case PvtY::Top:
-      start.height = hgt_t(0);
+  switch (piv.piv_y()) {
+    case piv_t::y::top():
+      start.height = 0_h;
       end.height = add_lim(start.height, hgt, ahth);
       break;
-    case PvtY::Center:
-      start.height = sub_lim((ahth / 2), (hgt / 2), hgt_t(0));
+    case piv_t::y::center():
+      start.height = sub_lim((ahth / 2_h), (hgt / 2_h), 0_h);
       end.height = add_lim(start.height, hgt, ahth);
       break;
-    case PvtY::Bottom:
+    case piv_t::y::bottom():
       end.height = ahth;
-      start.height = sub_lim(end.height, hgt, hgt_t(0));
+      start.height = sub_lim(end.height, hgt, 0_h);
       break;
   }
 

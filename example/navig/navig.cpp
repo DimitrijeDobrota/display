@@ -10,6 +10,8 @@
 namespace
 {
 
+using namespace display::literals;  // NOLINT(*namespace*)
+
 bool is_finished = false;  // NOLINT
 
 using display::WindowPivot;
@@ -17,51 +19,52 @@ using display::WindowPivot;
 class WindowCustom : public WindowPivot
 {
 public:
-  WindowCustom(display::plc_t aplc,
-               display::piv_t piv,
-               const example::menu_t& menu)
-      : WindowPivot(aplc, {4, 2, 5, 4}, piv, calc_dim(menu))
+  WindowCustom(
+      display::plc_t aplc, display::piv_t piv, const example::menu_t& menu
+  )
+      // NOLINTNEXTLINE(*magic*)
+      : WindowPivot(aplc, {4_w, 2_h, 5_w, 4_h}, piv, calc_dim(menu))
       , m_menu(menu)
   {
   }
 
   void render() const override
   {
-    std::cout << alec::background_v<alec::Color::BLUE>;
+    std::cout << alec::background_v<alec::color::blue>;
     line_reset();
 
     line_center(m_menu.title);
     line_empty();
     for (std::size_t i = 0; i < m_menu.items.size(); i++) {
       if (m_selected == i) {
-        std::cout << alec::foreground_v<alec::Color::GREEN>;
+        std::cout << alec::foreground_v<alec::color::green>;
       }
 
       line_right(m_menu.items[i].prompt);
 
       if (m_selected == i) {
-        std::cout << alec::foreground_v<alec::Color::DEFAULT>;
+        std::cout << alec::foreground_v<alec::color::def>;
       }
     }
 
     WindowPivot::render();
     WindowPivot::render_border();
 
-    std::cout << alec::background_v<alec::Color::DEFAULT>;
+    std::cout << alec::background_v<alec::color::def>;
     std::cout << std::flush;
   }
 
   void input(display::event& evnt) override
   {
-    if (evnt.type() != display::event::Type::KEY) {
+    if (evnt.type() != display::event::type::key) {
       return;
     }
 
     if (evnt.key() == 'j') {
-      if (m_selected + 1 < m_menu.items.size()) {
+      if (m_selected + 1U < m_menu.items.size()) {
         m_selected++;
       }
-      evnt.type() = display::event::Type::NONE;
+      evnt.type() = display::event::type::none;
       render();
       return;
     }
@@ -70,20 +73,20 @@ public:
       if (m_selected > 0) {
         m_selected--;
       }
-      evnt.type() = display::event::Type::NONE;
+      evnt.type() = display::event::type::none;
       render();
       return;
     }
 
     if (evnt.key() == 'l') {
       m_menu.items[m_selected].callback(m_selected);
-      evnt.type() = display::event::Type::NONE;
+      evnt.type() = display::event::type::none;
       return;
     }
 
     if (evnt.key() == 'h') {
       m_menu.callback(0);
-      evnt.type() = display::event::Type::NONE;
+      evnt.type() = display::event::type::none;
       return;
     }
   }
@@ -91,12 +94,17 @@ public:
 private:
   static display::dim_t calc_dim(const example::menu_t& menu)
   {
-    std::size_t width = menu.title.size();
+    using wth_t = display::wth_t;
+    using hgt_t = display::hgt_t;
+
+    wth_t width {menu.title.size()};
     for (const auto& item : menu.items) {
-      width = std::max(width, item.prompt.size());
+      const wth_t lwidth {item.prompt.size()};
+      width = std::max(width, lwidth);
     }
 
-    return {display::wth_t(width), display::hgt_t(menu.items.size() + 2)};
+    const hgt_t height {menu.items.size() + 2};
+    return {width, height};
   }
 
   example::menu_t m_menu;
@@ -112,7 +120,7 @@ int operation1(std::size_t /* unused */)  // NOLINT
 {
   std::cout << alec::cursor_position(1, 1) << "operation 1";
   std::cout << alec::cursor_position(2, 1)
-            << alec::erase_line_v<alec::Motion::WHOLE>
+            << alec::erase_line_v<alec::motion::whole>
             << "Some operation is done";
   std::cout << std::flush;
   return 1;
@@ -122,7 +130,7 @@ int operation2(std::size_t /* unused */)  // NOLINT
 {
   std::cout << alec::cursor_position(1, 1) << "operation 2";
   std::cout << alec::cursor_position(2, 1)
-            << alec::erase_line_v<alec::Motion::WHOLE>
+            << alec::erase_line_v<alec::motion::whole>
             << "Some other operation is done";
   std::cout << std::flush;
   return 1;
@@ -132,7 +140,7 @@ int operation3(std::size_t /* unused */)  // NOLINT
 {
   std::cout << alec::cursor_position(1, 1) << "operation 3";
   std::cout << alec::cursor_position(2, 1)
-            << alec::erase_line_v<alec::Motion::WHOLE>
+            << alec::erase_line_v<alec::motion::whole>
             << "Yet another operation is done";
   std::cout << std::flush;
   return 1;
@@ -141,7 +149,7 @@ int operation3(std::size_t /* unused */)  // NOLINT
 int finish(std::size_t /* unused */)  // NOLINT
 {
   std::cout << alec::cursor_position(1, 1)
-            << alec::erase_line_v<alec::Motion::WHOLE>;
+            << alec::erase_line_v<alec::motion::whole>;
   std::cout << "finishing...";
   std::cout << std::flush;
   is_finished = true;
@@ -151,7 +159,7 @@ int finish(std::size_t /* unused */)  // NOLINT
 int menu_t::visit(const menu_t& menu)
 {
   using display::Display, display::Layout;
-  using display::PvtX, display::PvtY, display::piv_t;
+  using display::piv_t;
 
   auto& layout = Display::display().layout();
 
@@ -167,7 +175,9 @@ int menu_t::visit(const menu_t& menu)
     stk.push(&menu);
   }
 
-  layout.set_child<WindowCustom>(piv_t(PvtX::Right, PvtY::Bottom), *stk.top());
+  layout.set_child<WindowCustom>(
+      piv_t(piv_t::x::right, piv_t::y::bottom), *stk.top()
+  );
   layout.render();
 
   return 0;
@@ -185,13 +195,13 @@ int main()
 
     while (!is_finished) {
       auto evnt = display.get_event();
-      if (evnt.type() == event::Type::RESIZE) {
-        std::cout << alec::erase_display_v<alec::Motion::WHOLE>;
+      if (evnt.type() == event::type::resize) {
+        std::cout << alec::erase_display_v<alec::motion::whole>;
         display.render();
         continue;
       }
 
-      if (evnt.type() == event::Type::KEY) {
+      if (evnt.type() == event::type::key) {
         if (evnt.key() == 'q') {
           break;
         }

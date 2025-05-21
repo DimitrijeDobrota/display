@@ -30,13 +30,13 @@ public:
 
   void render_border() const;
 
-  plc_t aplc() const { return m_aplc; }
-  pos_t apos() const { return aplc().pos; }
-  dim_t adim() const { return aplc().dim; }
-  xpos_t axpos() const { return apos().x; }
-  ypos_t aypos() const { return apos().y; }
-  wth_t awth() const { return adim().width; }
-  hgt_t ahgt() const { return adim().height; }
+  [[nodiscard]] plc_t aplc() const { return m_aplc; }
+  [[nodiscard]] pos_t apos() const { return aplc().pos; }
+  [[nodiscard]] dim_t adim() const { return aplc().dim; }
+  [[nodiscard]] xpos_t axpos() const { return apos().x; }
+  [[nodiscard]] ypos_t aypos() const { return apos().y; }
+  [[nodiscard]] wth_t awth() const { return adim().width; }
+  [[nodiscard]] hgt_t ahgt() const { return adim().height; }
 
 private:
   plc_t m_aplc;

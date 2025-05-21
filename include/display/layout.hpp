@@ -62,19 +62,19 @@ public:
 
   template<typename M = T>
     requires(std::is_base_of_v<T, M>)
-  const M& get_child() const
+  [[nodiscard]] const M& get_child() const
   {
     return *dynamic_cast<M*>(m_child.get());
   }
 
   template<typename M = T>
     requires(std::is_base_of_v<T, M>)
-  M& get_child()
+  [[nodiscard]] M& get_child()
   {
     return *dynamic_cast<M*>(m_child.get());
   }
 
-  bool has_child() const { return m_child != nullptr; }
+  [[nodiscard]] bool has_child() const { return m_child != nullptr; }
 
 private:
   ptr_t m_child;
@@ -134,19 +134,19 @@ public:
 
   template<typename M = T>
     requires(std::is_base_of_v<T, M>)
-  const M& get(std::size_t idx) const
+  [[nodiscard]] const M& get(std::size_t idx) const
   {
     return *dynamic_cast<M*>(m_children[idx].get());
   }
 
   template<typename M = T>
     requires(std::is_base_of_v<T, M>)
-  M& get(std::size_t idx)
+  [[nodiscard]] M& get(std::size_t idx)
   {
     return *dynamic_cast<M*>(m_children[idx].get());
   }
 
-  std::size_t size() const { return m_children.size(); }
+  [[nodiscard]] std::size_t size() const { return m_children.size(); }
 
 protected:
   template<typename M = T, class... Args>
